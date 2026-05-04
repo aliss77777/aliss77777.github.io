@@ -56,6 +56,13 @@
       padding-top: 72px;
     }
 
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
     .nav-name {
       font-family: var(--serif);
       font-size: 13px;
@@ -64,6 +71,10 @@
       color: var(--ink-light);
       margin-bottom: 28px;
       line-height: 1.4;
+    }
+
+    .nav-brand .nav-name {
+      margin: 0;
     }
 
     nav ul { list-style: none; }
@@ -412,6 +423,7 @@
         gap: 24px;
       }
       .nav-name { margin-bottom: 0; }
+      .nav-brand { margin-bottom: 0; }
       .nav-divider { display: none; }
       nav ul { display: flex; gap: 16px; }
       .hero {
@@ -429,7 +441,14 @@
 
   <!-- NAV -->
   <nav>
-    <p class="nav-name">Alexander<br>Liss</p>
+    <div class="nav-brand">
+      <svg width="20" height="20" viewBox="-22 -22 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M 0 -20 A 20 20 0 1 1 -14 14" fill="none" stroke="#f7f6f2" stroke-width="2" stroke-linecap="round"/>
+        <polygon points="-14,14 -21,7 -7,7" fill="#f7f6f2"/>
+        <circle cx="0" cy="0" r="3" fill="#c8580a"/>
+      </svg>
+      <p class="nav-name">Alexander<br>Liss</p>
+    </div>
     <div class="nav-divider"></div>
     <ul>
       <li><a href="#about"><span class="num">01</span> About</a></li>
@@ -526,15 +545,15 @@
       </div>
       <p class="section-label">Writing</p>
       <h2>Notes &amp; essays.</h2>
-      <p class="section-subtitle">Longer-form thinking on my Substack. Ideas that don't fit a paper.</p>
+      <p class="section-subtitle">Longer-form thinking on my Substack.</p>
 
       <div class="papers">
 
         <div class="paper">
           <span class="paper-num">01</span>
           <div class="paper-content">
-            <p class="paper-title">Essay Title: The Big Idea You've Been Thinking About</p>
-            <p class="paper-meta">Substack, Month Year</p>
+            <p class="paper-title">for Humans, Love is the drug, but for AI it's the reward signal</p>
+            <p class="paper-meta">Substack post announcing my reward signal thesis</p>
             <div class="paper-links">
               <a class="paper-link" href="https://substack.com/@alexanderliss513090" target="_blank" rel="noopener noreferrer">Read on Substack →</a>
             </div>

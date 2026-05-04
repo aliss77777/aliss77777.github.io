@@ -46,6 +46,37 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    @media (min-width: 720px) {
+      body {
+        padding-left: 36px;
+      }
+    }
+
+    /* arXiv-style left margin (submission watermark) */
+    .arxiv-margin {
+      display: none;
+      position: fixed;
+      left: 10px;
+      top: 50%;
+      z-index: 5;
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+      font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      color: #999999;
+      transform: translateY(-50%) rotate(-90deg);
+      transform-origin: center center;
+      pointer-events: none;
+    }
+
+    @media (min-width: 720px) {
+      .arxiv-margin {
+        display: block;
+      }
+    }
+
     /* SUBMISSION BANNER */
     .submission-banner {
       background: #fffbf0;
@@ -68,6 +99,16 @@
       text-transform: uppercase;
       background: #f0c040;
       color: #5a3e00;
+      padding: 3px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .badge-id {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      background: #e8f0ff;
+      color: #1a4a8a;
       padding: 3px 10px;
       border-radius: 2px;
       white-space: nowrap;
@@ -101,11 +142,6 @@
       color: var(--ink-light);
     }
     .site-nav a:hover { color: var(--ink); }
-    .site-nav .home {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--ink-mid);
-    }
 
     /* PAPER WRAPPER */
     .paper {
@@ -454,19 +490,22 @@
 </head>
 <body>
 
+<p class="arxiv-margin" aria-hidden="true">arXiv:submit/7446261 [cs.AI] 15 Apr 2026</p>
+
 <!-- SUBMISSION BANNER -->
 <div class="submission-banner">
   <div class="inner">
     <span class="badge">Under Review</span>
-    <p>Submitted to arXiv &middot; Submission in moderation queue &middot; May 2026 &middot; <a href="https://aliss77777.github.io">Back to aliss77777.github.io</a></p>
+    <span class="badge-id">arXiv:submit/7446261 [cs.AI]</span>
+    <p>Submitted 15 Apr 2026 &middot; <a href="https://aliss77777.github.io">Back to aliss77777.github.io</a></p>
   </div>
 </div>
 
 <!-- SITE NAV -->
 <div class="site-nav">
   <div class="inner">
-    <a href="https://aliss77777.github.io" class="home">&#8592; aliss77777.github.io</a>
-    <a href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank">GitHub Repo &#8599;</a>
+    <a href="https://aliss77777.github.io">&#8592; aliss77777.github.io</a>
+    <a href="eo.html">Related paper: EO &#8599;</a>
   </div>
 </div>
 
@@ -479,10 +518,12 @@
     <p class="paper-authors">Alexander Liss</p>
     <p class="paper-affiliation">Georgia Institute of Technology &middot; aliss6@gatech.edu</p>
     <div class="paper-links">
-      <a class="paper-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank">GitHub</a>
-      <a class="paper-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank">Interactive Demo</a>
+      <a class="paper-link" href="https://huggingface.co/aliss77777/gcd-aft-weights-phase-1" target="_blank" rel="noopener noreferrer">Model Weights</a>
+      <a class="paper-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank" rel="noopener noreferrer">Demo</a>
+      <a class="paper-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank" rel="noopener noreferrer">Code</a>
+      <a class="paper-link" href="eo.html">Companion paper: EO</a>
     </div>
-    <p class="paper-meta">Preprint &middot; Submitted May 2026 &middot; Under review</p>
+    <p class="paper-meta">arXiv:submit/7446261 [cs.AI] &middot; Submitted 15 Apr 2026 &middot; Under review</p>
   </div>
 
   <!-- TOC -->
