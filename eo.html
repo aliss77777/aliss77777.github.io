@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Governance of Multi-LLM Agent Systems for Collaborative Conversational Outcomes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left:'$$',right:'$$',display:true},
+        {left:'$',right:'$',display:false}
+      ]
+    });"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #1a1916; --ink-mid: #3a3834; --ink-light: #777570;
+      --ink-faint: #e4e2dc; --bg: #ffffff; --bg-off: #f8f7f4;
+      --accent: #b5401a; --link: #1a4a8a;
+      --serif: 'Noto Serif', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --mono: 'DM Mono', monospace;
+      --col: 680px;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: var(--serif); font-size: 16px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+
+    @media (min-width: 720px) {
+      body { padding-left: 36px; }
+    }
+
+    .arxiv-margin {
+      display: none;
+      position: fixed;
+      left: 10px;
+      top: 50%;
+      z-index: 5;
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+      font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      color: #999999;
+      transform: translateY(-50%) rotate(-90deg);
+      transform-origin: center center;
+      pointer-events: none;
+    }
+
+    @media (min-width: 720px) {
+      .arxiv-margin { display: block; }
+    }
+
+    .submission-banner { background: #fffbf0; border-bottom: 1px solid #e8d89a; padding: 10px 0; }
+    .submission-banner .inner { max-width: var(--col); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: #f0c040; color: #5a3e00; padding: 3px 10px; border-radius: 2px; white-space: nowrap; }
+    .badge-id { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; background: #e8f0ff; color: #1a4a8a; padding: 3px 10px; border-radius: 2px; white-space: nowrap; }
+    .submission-banner p { font-family: var(--sans); font-size: 12px; color: #7a6020; }
+    .submission-banner a { color: var(--link); }
+
+    .site-nav { border-bottom: 1px solid var(--ink-faint); padding: 12px 0; }
+    .site-nav .inner { max-width: var(--col); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
+    .site-nav a { font-family: var(--sans); font-size: 13px; text-decoration: none; color: var(--ink-light); }
+    .site-nav a:hover { color: var(--ink); }
+
+    .paper { max-width: var(--col); margin: 0 auto; padding: 56px 24px 120px; }
+
+    .paper-header { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--ink-faint); }
+    .paper-title { font-family: var(--serif); font-size: clamp(22px, 3.5vw, 30px); font-weight: 700; line-height: 1.25; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.01em; }
+    .paper-authors { font-family: var(--sans); font-size: 14px; color: var(--ink-mid); margin-bottom: 4px; }
+    .paper-affiliation { font-family: var(--sans); font-size: 13px; color: var(--ink-light); margin-bottom: 20px; }
+    .paper-links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .paper-link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-decoration: none; color: var(--link); border: 1px solid var(--link); padding: 4px 12px; transition: background 0.15s, color 0.15s; }
+    .paper-link:hover { background: var(--link); color: white; }
+    .paper-meta { font-family: var(--mono); font-size: 11px; color: var(--ink-light); letter-spacing: 0.04em; }
+
+    .toc { background: var(--bg-off); border: 1px solid var(--ink-faint); padding: 20px 24px; margin-bottom: 48px; }
+    .toc-title { font-family: var(--sans); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 12px; }
+    .toc ol { list-style: none; counter-reset: toc; }
+    .toc ol li { counter-increment: toc; font-family: var(--sans); font-size: 13px; margin-bottom: 4px; }
+    .toc ol li::before { content: counter(toc) ". "; font-family: var(--mono); color: var(--ink-light); font-size: 11px; }
+    .toc a { color: var(--link); text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    .abstract { background: var(--bg-off); border-left: 3px solid var(--ink-faint); padding: 20px 24px; margin-bottom: 48px; }
+    .abstract-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
+    .abstract p { font-size: 15px; line-height: 1.7; color: var(--ink-mid); }
+
+    h2 { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--ink); margin-top: 48px; margin-bottom: 16px; padding-top: 48px; border-top: 1px solid var(--ink-faint); }
+    h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+    h3 { font-family: var(--serif); font-size: 16px; font-weight: 700; font-style: italic; color: var(--ink); margin-top: 28px; margin-bottom: 12px; }
+
+    p { margin-bottom: 16px; color: var(--ink-mid); }
+    strong { color: var(--ink); font-weight: 700; }
+    em { font-style: italic; }
+    a { color: var(--link); }
+
+    figure { margin: 32px 0; text-align: center; }
+    figure img { max-width: 100%; border: 1px solid var(--ink-faint); display: block; margin: 0 auto; }
+    figcaption { font-family: var(--sans); font-size: 13px; color: var(--ink-light); margin-top: 10px; line-height: 1.5; text-align: left; }
+    figcaption strong { color: var(--ink-mid); font-weight: 500; }
+
+    .table-wrap { margin: 32px 0; overflow-x: auto; }
+    .table-caption { font-family: var(--sans); font-size: 13px; color: var(--ink-light); margin-bottom: 10px; line-height: 1.5; }
+    table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 13px; }
+    th { font-weight: 500; color: var(--ink); border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink); padding: 8px 12px; text-align: left; }
+    td { padding: 8px 12px; color: var(--ink-mid); border-bottom: 1px solid var(--ink-faint); }
+    tr.primary td { font-weight: 500; color: var(--ink); background: #f5f9f0; }
+    tr.hero td { font-weight: 700; color: var(--ink); background: #fff8e8; border-top: 1px solid #e8d89a; }
+    tr.context-row td { background: var(--bg-off); font-style: italic; color: var(--ink); }
+    .eq { margin: 20px 0; overflow-x: auto; padding: 12px 0; }
+
+    /* STAT CARDS */
+    .stat-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 32px 0; }
+    .stat-card { border: 1px solid var(--ink-faint); padding: 20px; text-align: center; }
+    .stat-num { font-family: var(--serif); font-size: 32px; font-weight: 700; color: var(--ink); line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-family: var(--sans); font-size: 12px; color: var(--ink-light); line-height: 1.4; }
+
+    /* PERSONA TABLE */
+    .persona-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+    .persona-card { border: 1px solid var(--ink-faint); padding: 14px 16px; }
+    .persona-name { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink); margin-bottom: 4px; }
+    .persona-lift { font-family: var(--sans); font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+    .lift-big { color: #1a6a2a; }
+    .lift-small { color: var(--ink-light); }
+    .lift-neg { color: var(--accent); }
+    .persona-desc { font-family: var(--sans); font-size: 12px; color: var(--ink-light); line-height: 1.4; margin: 0; }
+
+    /* FAILURE MODES */
+    .failure-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 24px 0; }
+    .failure-card { border: 1px solid var(--ink-faint); padding: 16px; }
+    .failure-name { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+    .failure-desc { font-family: var(--sans); font-size: 13px; color: var(--ink-light); line-height: 1.5; margin: 0; }
+
+    .references { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--ink-faint); }
+    .references h2 { border-top: none; padding-top: 0; margin-top: 0; }
+    .ref-list { list-style: none; counter-reset: refs; }
+    .ref-list li { counter-increment: refs; font-family: var(--sans); font-size: 12px; color: var(--ink-light); line-height: 1.6; margin-bottom: 10px; display: flex; gap: 10px; }
+    .ref-list li::before { content: "[" counter(refs) "]"; font-family: var(--mono); font-size: 10px; color: #ccc; flex-shrink: 0; padding-top: 2px; }
+
+    .appendix-section { margin-top: 16px; padding: 20px; border: 1px solid var(--ink-faint); background: var(--bg-off); }
+    .appendix-section h4 { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+    .appendix-section p { font-family: var(--sans); font-size: 13px; color: var(--ink-light); margin-bottom: 8px; }
+
+    @media (max-width: 600px) {
+      .stat-row { grid-template-columns: 1fr; }
+      .persona-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="arxiv-margin" aria-hidden="true">arXiv:submit/7520140 [cs.AI] 25 Apr 2026</p>
+
+<div class="submission-banner">
+  <div class="inner">
+    <span class="badge">Under Review</span>
+    <span class="badge-id">arXiv:submit/7520140 [cs.AI]</span>
+    <p>Submitted 25 Apr 2026 &middot; <a href="https://aliss77777.github.io">Back to aliss77777.github.io</a></p>
+  </div>
+</div>
+
+<div class="site-nav">
+  <div class="inner">
+    <a href="https://aliss77777.github.io">&#8592; aliss77777.github.io</a>
+    <a href="aft.html">Related paper: AFT &#8599;</a>
+  </div>
+</div>
+
+<div class="paper">
+
+  <div class="paper-header">
+    <h1 class="paper-title">Dynamic Governance of Multi-LLM Agent Systems for Collaborative Conversational Outcomes</h1>
+    <p class="paper-authors">Alexander Liss, Nicholas Desmond, Santiago Gil Gallego</p>
+    <p class="paper-affiliation">Georgia Institute of Technology &middot; Huge Inc.</p>
+    <div class="paper-links">
+      <a class="paper-link" href="https://exp-orchestrator-ui-aiewf-3xxvn3xina-uc.a.run.app/" target="_blank" rel="noopener noreferrer">Demo</a>
+      <a class="paper-link" href="aft.html">Companion paper: AFT</a>
+    </div>
+    <p class="paper-meta">arXiv:submit/7520140 [cs.AI] &middot; Submitted 25 Apr 2026 &middot; Under review</p>
+  </div>
+
+  <div class="toc">
+    <p class="toc-title">Contents</p>
+    <ol>
+      <li><a href="#abstract">Abstract</a></li>
+      <li><a href="#intro">Introduction and Hypothesis</a></li>
+      <li><a href="#related">Related Work</a></li>
+      <li><a href="#environment">The Simulation Environment</a></li>
+      <li><a href="#governance">The Governance Layer</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#discussion">Discussion</a></li>
+      <li><a href="#conclusion">Conclusion and Future Work</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+    </ol>
+  </div>
+
+  <div class="abstract" id="abstract">
+    <p class="abstract-label">Abstract</p>
+    <p>Classical multi-agent reinforcement learning composes a shared policy through joint reward optimization. LLM agents lack this foundation: deployed in multi-agent settings with structurally opposed objectives, they drift toward attractor states rather than converging to cooperative equilibria. This paper asks whether a control theory-informed governance layer can substitute for the missing goal function, steering two LLM agents toward a jointly optimal outcome.</p>
+    <p>We propose the <strong>Experience Orchestrator (EO)</strong>, which explores a simulated financial services environment where a site agent guides a visitor toward a "speak with financial advisor" digital action while the visitor agent maintains realistic resistance given its persona. EO governs the joint trajectory through Contextual Bandit (CB) action selection calibrated from real-world web session analytics, PID-controlled schema constraints, and POMDP belief tracking.</p>
+    <p>Across a 60,000-simulation factorial evaluation, the full system achieves a <strong>+32 point lift</strong> in high-intent advisor contact rate (78.1% vs. 46.1%) over an LLM control guided purely with a system prompt. Critically, CB variant selection accounts for <strong>97% of between-factor outcome variance</strong> versus 3% for friction model choice, confirming that the governance policy, not environmental initial conditions, determines where trajectories end up.</p>
+  </div>
+
+  <!-- INTRO -->
+  <section id="intro">
+    <h2>1. Introduction and Hypothesis</h2>
+
+    <h3>The Missing Goal Function</h3>
+    <p>The challenge of coordinating independent LLM agents toward a shared objective has emerged as one of the most pressing problems in applied AI. Despite rapid adoption of multi-agent systems across business domains, the fundamental question of how to make structurally independent agents collaborate effectively remains largely unsolved.</p>
+    <p>Classical RL agents optimize an explicit reward function; the goal is mathematically encoded in every gradient update. <strong>LLM agents have no equivalent.</strong> Their behavior is shaped by a prompt, which specifies intent in natural language but provides no formal optimization target. When two LLM agents with structurally opposed objectives interact across multiple turns, the absence of a shared goal function produces not competition but collapse: neither agent has a mechanism to recognize the joint trajectory is suboptimal, and neither has a gradient signal to correct it.</p>
+    <p>The result is convergence toward agreement regardless of initial conditions. This is not a model failure; it is a <strong>system architecture failure</strong>. There is no goal function to enforce, so there is no corrective force to apply.</p>
+
+    <h3>The Dynamical Systems Framing</h3>
+    <p>Van Gelder's Dynamical Hypothesis establishes that intelligent agents are best understood as dynamical systems evolving through state space over time. Kelso's coordination dynamics formalizes the phenomenology: healthy cognitive systems navigate a rich attractor landscape, moving fluidly between basins in response to environmental input. Pathological behavior is precisely what happens when a system becomes trapped — when the gradient landscape provides no escape from a fixed point that is locally stable but globally suboptimal.</p>
+    <p>Multi-agent LLM systems exhibit the same behavior. The governance question is therefore a dynamical systems question: what external force, applied to the joint trajectory, is sufficient to steer the system away from degenerate attractors and toward the cooperative equilibrium?</p>
+
+    <h3>System Overview</h3>
+    <p>The <em>Experience Orchestrator</em> (EO) applies classical control theory as the substitute for the missing goal function. The experiment space is a financial services website, where a human visitor browses for retirement planning information and encounters an LLM-powered chatbot. The site agent seeks to guide the visitor toward scheduling a consultation with a financial advisor, while the visitor maintains realistic skepticism based on their assigned persona. EO governs the joint trajectory through three mechanisms: a PID controller that enforces behavioral consistency in real time; a POMDP belief tracker that maintains a probabilistic model of visitor intent; and a contextual bandit that selects the optimal content arm at each decision point.</p>
+
+    <figure>
+      <img src="eo_figure1_v3.png" alt="Experience Orchestrator governance loop and trajectory view" />
+      <figcaption><strong>Figure 1.</strong> Left: per-turn governance loop. The CB selects an arm directive, the PID controller translates resistance error into schema bounds, and the dynamic schema constrains the visitor LLM's structured output. Right: trajectory view ($t_0 \to t^T$). $\rho$ arrows show resistance direction at each step — governance drives monotonic decline toward terminal conversion.</figcaption>
+    </figure>
+
+    <h3>Hypothesis</h3>
+    <p>We measure three things: <strong>Lift</strong> — whether the governed system achieves substantially higher advisor contact rates than a naive LLM baseline. <strong>Policy dominance</strong> — whether CB variant selection explains substantially more outcome variance than environmental factors. <strong>Trajectory quality</strong> — whether governed conversation trajectories exhibit qualitatively different dynamics than ungoverned baselines.</p>
+  </section>
+
+  <!-- RELATED WORK -->
+  <section id="related">
+    <h2>2. Related Work</h2>
+    <p>Classical multi-agent RL frames cooperative and competitive tasks as joint reward optimization. LLM-based multi-agent systems lack this grounding. We propose control theory as an exogenous substitute for the missing goal function, enforcing behavioral consistency without modifying model weights or requiring preference labels.</p>
+    <p>Chuang et al. demonstrated that LLM agents in multi-agent simulations converge toward agreement regardless of initial positions — the core failure mode our governance layer corrects. The PMIYC framework validated LLM self-reported agreement as a reliable persuasion measure. DialogXpert validated decoupling "what to say" from "what is strategically optimal." Baheri and Alm showed LLMs as context encoders for CB feature enrichment (LLM&rarr;CB); our system uses the inverse direction (CB&rarr;LLM), where the bandit selects actions the LLM realizes as dialogue.</p>
+    <p>Young et al. established the foundational POMDP framework for dialogue management. Chen et al. applied PID controllers to LLM hidden layers for adversarial robustness. Char and Schneider demonstrated that PID-inspired inductive biases outperform recurrent architectures for RL in partially observable environments because PID mechanisms resist overfitting to simulator dynamics — directly warranting PID as the governance mechanism when the environment is a stochastic LLM.</p>
+  </section>
+
+  <!-- ENVIRONMENT -->
+  <section id="environment">
+    <h2>3. The Simulation Environment</h2>
+
+    <h3>Adversarial-Adjacent MARL</h3>
+    <p>The EO system instantiates a specific class of multi-agent problem we term <em>adversarial-adjacent</em>: the two agents have structurally opposed turn-level objectives (conversion vs. resistance), but the system is designed around the hypothesis that governance can steer the joint trajectory toward a cooperative terminal state. This is distinct from zero-sum MARL (where one agent's gain is the other's loss) and from fully cooperative MARL (where agents share a reward function). <strong>Cooperation is not assumed; it is the empirical question.</strong></p>
+
+    <h3>Simulation Space</h3>
+    <p>We conducted 60,425 visitor sessions entirely through simulation. A visitor agent — instantiated with one of six behavioral personas drawn from real-world audience research — navigates a series of pages on a financial services website. At the end of their browsing journey, each visitor reaches a "Find an Advisor" decision boundary page where a site agent (LLM-powered chatbot) begins a structured dialogue. The governance layer observes both agents and applies corrective force to the joint trajectory.</p>
+
+    <h3>Six Visitor Personas</h3>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <p class="persona-name">digital_native</p>
+        <p class="persona-lift lift-big">+68.7pp lift</p>
+        <p class="persona-desc">Self-directed, skeptical. Control LLM: 0.6%. Governance closes the gap entirely.</p>
+      </div>
+      <div class="persona-card">
+        <p class="persona-name">fee_hawk</p>
+        <p class="persona-lift lift-big">+62.8pp lift</p>
+        <p class="persona-desc">Cost-focused, resistant to sales pressure. Control LLM: 1.0%.</p>
+      </div>
+      <div class="persona-card">
+        <p class="persona-name">dashboard_exile</p>
+        <p class="persona-lift lift-small">+0.1pp lift</p>
+        <p class="persona-desc">Near-alignment. Control LLM already achieves 90% — governance adds marginal lift.</p>
+      </div>
+      <div class="persona-card">
+        <p class="persona-name">legacy_loyalist</p>
+        <p class="persona-lift lift-small">+3.2pp lift</p>
+        <p class="persona-desc">Near-alignment. Control LLM's empathetic defaults are sufficient.</p>
+      </div>
+      <div class="persona-card">
+        <p class="persona-name">stranded_saver</p>
+        <p class="persona-lift lift-small">+3.9pp lift</p>
+        <p class="persona-desc">Near-alignment. Highest absolute conversion rate: 98.6% under governance.</p>
+      </div>
+      <div class="persona-card">
+        <p class="persona-name">grieving_proxy</p>
+        <p class="persona-lift lift-neg">&#8722;24.5pp</p>
+        <p class="persona-desc">Critical exception. Governance performs worse — emotionally sensitive persona requires tailored handling outside current arm design.</p>
+      </div>
+    </div>
+
+    <h3>Visitor Resistance Model</h3>
+    <p>Visitor resistance $\rho \in [0,1]$ represents the visitor agent's disposition toward advisor contact:</p>
+    <div class="eq">$$\rho_0 \sim \text{Beta}(\alpha_C, \beta_C), \quad C \in \{\text{GREEN, YELLOW, RED}\}$$</div>
+    <p>with $\mathbb{E}[\rho | \text{GREEN}] = 0.20$, $\mathbb{E}[\rho | \text{YELLOW}] = 0.50$, $\mathbb{E}[\rho | \text{RED}] = 0.80$.</p>
+
+    <h3>Composite Shaped Reward</h3>
+    <p>The shaped reward solves the sparse reward problem at real-world conversion rates near 10%:</p>
+    <div class="eq">$$R_t = w_\rho (-\Delta\rho_t) + w_H (-\Delta H_t) + w_{\text{eff}} \cdot \tfrac{1}{t} + w_{\text{conv}} R_{\text{terminal}}$$</div>
+    <p>where $-\Delta\rho_t$ rewards resistance decline, $-\Delta H_t$ rewards intent disambiguation, $1/t$ is an efficiency bonus, and $R_{\text{terminal}} \in \{1.0, 0.4, 0.2, 0.0, -0.2\}$ encodes terminal outcome quality. Weights: $w_\rho=0.3$, $w_H=0.2$, $w_{\text{eff}}=0.1$, $w_{\text{conv}}=0.4$.</p>
+  </section>
+
+  <!-- GOVERNANCE LAYER -->
+  <section id="governance">
+    <h2>4. The Governance Layer</h2>
+
+    <h3>Belief State Tracking (POMDP)</h3>
+    <p>Because the visitor's true intent is hidden from the site agent, the governance layer maintains a probabilistic belief about what the visitor actually wants. The belief state $b_t$ is a Dirichlet distribution over four intent categories $\mathcal{I} = \{\text{browse, compare, purchase, support}\}$:</p>
+    <div class="eq">$$b_t = \text{Dir}(\alpha_t), \quad \alpha_{t+1} = \alpha_t + c_t$$</div>
+    <p>where $c_t$ is an observation count vector derived from keyword signals in the visitor's message. Entropy $H(b_t)$ decreases as the system learns about visitor intent; this entropy signal feeds into PID gain scheduling.</p>
+
+    <h3>PID Controller with EMA/SMA Trend Detection</h3>
+    <p>The PID controller observes the gap between the visitor's current resistance and a target value, accumulates evidence of persistent stagnation across multiple turns, and applies corrective force through the schema constraint system. The three terms correspond to three complementary correction strategies: the proportional term responds to current deviation; the integral term corrects for persistent drift; and the derivative term provides anticipatory correction when the trajectory is accelerating toward an attractor state.</p>
+    <div class="eq">$$u_t = K_p e_t + K_i \sum_{\tau=0}^{t} e_\tau + K_d (e_t - e_{t-1})$$</div>
+    <p>Gain scheduling adapts the proportional gain based on belief entropy and conversation age:</p>
+    <div class="eq">$$K_{p,\text{eff}} = K_p \cdot (1 + \lambda H(b_t)) \cdot (1 + \gamma \max(0, t-3))$$</div>
+    <p>Trend detection uses two complementary moving averages. EMA detects directional trend; SMA detects stagnation. Stagnation is flagged when $|\text{SMA}_t - \text{SMA}_{t-1}| < 0.3$, triggering the Stagnant Loop escape mechanism.</p>
+
+    <h3>Dynamic Schema Constraints</h3>
+    <p>The PID output determines the visitor's resistance score bounds for the current turn on an integer scale from 1 (fully open) to 5 (complete refusal):</p>
+    <div class="eq">
+      $$\text{Stagnant:} \quad [\,r_{t-1},\; \min(5, r_{t-1} + \Delta)\,]$$
+      $$\text{Declining:} \quad [\,\max(1, r_{t-1} - \Delta),\; r_{t-1}\,]$$
+    </div>
+    <p>where $\Delta = \text{clip}(|I_t| \times 2.0,\; \Delta_{\min},\; \Delta_{\max})$. The schema is realized as a dynamically constructed Pydantic <code>BaseModel</code> passed to the LLM's <code>with_structured_output()</code>.</p>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <h2>5. Results</h2>
+
+    <div class="stat-row">
+      <div class="stat-card">
+        <p class="stat-num">+32pp</p>
+        <p class="stat-label">Lift in advisor contact rate<br>(78.1% vs. 46.1%)</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-num">97%</p>
+        <p class="stat-label">Outcome variance explained by CB governance policy</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-num">60,425</p>
+        <p class="stat-label">Simulations across 8 friction models, 6 personas</p>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <p class="table-caption"><strong>Table 1.</strong> Primary outcomes: V4_SemRush vs. Control LLM. Advisor-contact metric: terminal = Contact AND $\rho_\text{final} < 0.40$, traffic-weighted.</p>
+      <table>
+        <thead>
+          <tr><th>Metric</th><th>V4_SemRush</th><th>Control LLM</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Advisor contact rate (traffic-wtd.)</td><td><strong>78.1%</strong></td><td>46.1%</td></tr>
+          <tr><td>95% CI</td><td>[76.8, 79.4]</td><td>[44.6, 47.6]</td></tr>
+          <tr><td>Arm alignment</td><td>73%</td><td>48%</td></tr>
+          <tr class="hero"><td>Lift vs. Control LLM</td><td colspan="2"><strong>+32.0 pp</strong> (p &lt; 0.001)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>Lift (H1).</strong> V4_SemRush achieves a high-intent advisor contact rate of 78.1% versus 46.1% for Control LLM — a +32.0 point lift (Fisher's exact, $p < 0.001$). The governed system reaches 90% of the clairvoyant Oracle ceiling, confirming that governance, not arm luck, drives the result.</p>
+    <p><strong>Policy dominance (H2).</strong> Two-way ANOVA across 60,425 simulations attributes 97% of between-factor outcome variance to CB variant selection and only 3% to friction model choice. The governing policy overwhelmingly determines where trajectories end up, regardless of environmental starting conditions. This is the paper's strongest scientific claim.</p>
+    <p><strong>Trajectory quality (H3).</strong> Under governance, arm selection aligns to persona reward priors and resistance declines monotonically. Without governance, arm mismatch escalates resistance until the dead-end detection mechanism terminates the session.</p>
+
+    <h3>Conversation Snapshot: Governed vs. Ungoverned</h3>
+    <div class="table-wrap">
+      <p class="table-caption"><strong>Table 2.</strong> Conversation snapshot (fee_hawk): governed vs. ungoverned at the critical Turn 2 divergence point. The visitor has just said they want to research independently. V4_SemRush listens and pivots; Control LLM ignores the signal and pitches advisor contact again.</p>
+      <table>
+        <thead>
+          <tr><th></th><th>V4_SemRush (Governed)</th><th>Control LLM (Ungoverned)</th></tr>
+        </thead>
+        <tbody>
+          <tr class="context-row"><td colspan="3">Visitor (T1): Searches "retirement." &rho; = 0.18</td></tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">Arm</td>
+            <td>Math</td>
+            <td>Contact</td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">Response</td>
+            <td><em>"Interested in planning? Explore our retirement tools and resources, or speak with an advisor."</em></td>
+            <td><em>"I'd recommend speaking with one of our certified advisors. Can I help schedule a consultation?"</em></td>
+          </tr>
+          <tr class="context-row"><td colspan="3">Visitor (T2): "I'd rather research this myself first." [explicit resistance signal]</td></tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">Arm</td>
+            <td><strong>Questions</strong></td>
+            <td><strong>Contact (again)</strong></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">&rho;</td>
+            <td><strong style="color:#1a6a2a;">0.14 &#8595;</strong></td>
+            <td><strong style="color:var(--accent);">0.41 &#8593;</strong></td>
+          </tr>
+          <tr>
+            <td style="font-family:var(--mono);font-size:11px;">Response</td>
+            <td><em>"Looking for account types (IRAs, 401k), investment strategies, or planning calculators?"</em> Adapts to stated intent.</td>
+            <td><em>"Our advisors answer your specific questions. Shall I book a 15-min call?"</em> Ignores stated intent.</td>
+          </tr>
+          <tr class="hero">
+            <td style="font-family:var(--mono);font-size:11px;">&rho; final</td>
+            <td><strong>0.08 — Conversion</strong></td>
+            <td><strong>0.62 — No conversion</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- DISCUSSION -->
+  <section id="discussion">
+    <h2>6. Discussion</h2>
+
+    <h3>Three Implications</h3>
+    <p><strong>Policy composition without joint training.</strong> The CB policy produces coordinated behavior from agents that do not share a reward function. Effective multi-agent collaboration does not require re-architecting the agents or retraining them jointly. It requires building a better governor. Organizations deploying multi-agent systems today do not need to rebuild their agent stack. They need to invest in the governance layer that sits above it.</p>
+    <p><strong>The governor as the dominant variance source.</strong> The 97% variance attribution to CB variant choice means the quality of the governing policy — not the sophistication of individual agents or the friction characteristics of the environment — is the primary determinant of system performance. System designers should invest in governance policy quality before optimizing agent-level behavior.</p>
+    <p><strong>Control theory as a generalizable LLM governance paradigm.</strong> PID control is theoretically warranted for POMDP environments because its inductive biases resist overfitting to simulator dynamics. The EO results provide empirical validation of this property in an LLM setting. Classical control theory provides a rich toolkit — adaptive control, model predictive control, robust control — that has not yet been systematically applied to LLM multi-agent governance.</p>
+
+    <h3>Training Failure Modes</h3>
+    <div class="failure-grid">
+      <div class="failure-card">
+        <p class="failure-name">Sycophantic Collapse</p>
+        <p class="failure-desc">The visitor agent converges toward agreement without genuine engagement. More dangerous in production because it produces false-positive conversion signals. Detected by the $\rho_\text{final} < 0.40$ resistance gate.</p>
+      </div>
+      <div class="failure-card">
+        <p class="failure-name">Stagnant Loop</p>
+        <p class="failure-desc">Resistance neither rises nor falls — neither agent provides sufficient gradient for the trajectory to escape a local equilibrium. In production customer-service deployments, this manifests as conversations that are polite but never resolve. The PID integral term corrects this.</p>
+      </div>
+      <div class="failure-card">
+        <p class="failure-name">Arm Fixation</p>
+        <p class="failure-desc">The CB concentrates on a single arm regardless of persona state — an over-exploitation failure that mirrors the narrowing of messaging strategy seen in poorly tuned A/B testing systems.</p>
+      </div>
+    </div>
+
+    <h3>Connection to AFT: Exogenous and Endogenous Reward</h3>
+    <p>The EO architecture enforces behavioral consistency from <em>outside</em> the model through schema constraints at the structured output layer. This positions EO as one side of a two-sided bracket on the reward signal reliability problem. <a href="aft.html">Attention Fine-Tuning (AFT)</a> approaches the same problem from the <em>endogenous</em> direction, deriving a self-supervised reward signal from decoder cross-attention activations. Both systems reach the same conclusion: the signal that matters is grounded in what the model is actually doing, not what it reports. The natural synthesis — replacing the PID heuristic with a HACA-based internal reward — is the open experiment that bridges these two research lines.</p>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <h2>7. Conclusion and Future Work</h2>
+    <p>We presented the Experience Orchestrator, demonstrating that a control-theoretic governance layer can substitute for the missing goal function in a multi-agent LLM system, steering two agents with structurally differing objectives toward a jointly optimal outcome. The full system achieves a +32.0 point lift in high-intent advisor contact rate, with CB variant selection accounting for 97% of between-factor variance across a 60,000+ simulation factorial evaluation — the first empirical demonstration of adversarial-adjacent MARL dynamics in an LLM agent setting governed by classical control theory.</p>
+
+    <h3>Limitations</h3>
+    <p><strong>All findings are conditional on LLM simulation.</strong> The visitor agent is another language model, not a human. Real visitors are far more unpredictable: they do not maintain consistent persona behavior across a session, they respond to conversational subtext that a structured schema cannot capture, and they may escalate, disengage, or behave in ways that fall entirely outside the six archetypes modeled here. Careful human-in-the-loop testing will be required before the PID gains and schema bounds can be trusted in a live environment.</p>
+
+    <h3>Future Work</h3>
+    <p><strong>Live A/B validation.</strong> Running V4_SemRush against real traffic is the critical next step, and will determine how much of the simulation-measured lift survives contact with real human unpredictability.</p>
+    <p><strong>HACA-Based Internal Reward Signal.</strong> The companion paper demonstrates Attention Fine-Tuning (AFT), a post-training framework that derives a self-supervised reward signal from decoder cross-attention dynamics. Augmenting the EO PID heuristic with a HACA-based internal reward would produce endogenously grounded governance — the convergence of exogenous control and endogenous reward shaping.</p>
+    <p><strong>Domain generalization.</strong> The adversarial-adjacent MARL framing is not specific to financial services. Healthcare consultations, enterprise software sales, HR recruiting conversations, and technical support interactions all exhibit the same structural pattern: one agent seeking to guide, one maintaining resistance, and a shared terminal outcome neither can reach alone.</p>
+    <p><strong>POMCP Lookahead Planning.</strong> Replacing the myopic CB with POMCP lookahead planning that simulates 3-5 turns ahead would extend the governance horizon and may produce further lift by anticipating resistance escalation before it becomes entrenched.</p>
+  </section>
+
+  <!-- REFERENCES -->
+  <div class="references" id="references">
+    <h2>References</h2>
+    <ol class="ref-list">
+      <li>T. van Gelder, "The dynamical hypothesis in cognitive science," <em>Behavioral and Brain Sciences</em>, vol. 21, no. 5, pp. 615-628, 1998.</li>
+      <li>J. A. S. Kelso, <em>Dynamic Patterns</em>. MIT Press, 1995.</li>
+      <li>I. Char and J. Schneider, "PID-inspired inductive biases for deep RL in partially observable environments," <em>NeurIPS</em>, 2023.</li>
+      <li>Y.-S. Chuang et al., "Simulating opinion dynamics with networks of LLM-based agents," <em>NAACL Findings</em>, 2024.</li>
+      <li>S. Young et al., "POMDP-based statistical spoken dialogue systems: A review," <em>Proc. IEEE</em>, vol. 101, no. 5, pp. 1160-1179, 2013.</li>
+      <li>D. Silver and J. Veness, "Monte-Carlo planning in large POMDPs," <em>NeurIPS</em>, 2010.</li>
+      <li>R. Lowe et al., "Multi-agent actor-critic for mixed cooperative-competitive environments," <em>NeurIPS</em>, 2017.</li>
+      <li>E. Perez et al., "Red teaming language models with language models," <em>arXiv:2202.03286</em>, 2022.</li>
+      <li>Z. Kenton et al., "Alignment of language agents," <em>arXiv:2103.14659</em>, 2021.</li>
+      <li>L. Ouyang et al., "Training language models to follow instructions with human feedback," <em>NeurIPS</em>, 2022.</li>
+      <li>N. Karampatziakis et al., "Lessons from contextual bandit learning in a customer support bot," <em>arXiv:1905.02219</em>, 2019.</li>
+      <li>H. Baheri and C. O. Alm, "LLMs-augmented contextual bandit," <em>NeurIPS FMDM Workshop</em>, 2023.</li>
+      <li>D. Bouneffouf and R. Feraud, "Multi-armed bandits meet large language models," <em>arXiv:2505.13355</em>, 2025.</li>
+      <li>M. Dudik et al., "Doubly robust policy evaluation and learning," <em>ICML</em>, 2011.</li>
+      <li>X. Chen et al., "PID control-based self-healing to improve the robustness of LLMs," <em>TMLR</em>, 2024.</li>
+      <li>N. B. Bozdag et al., "Persuade me if you can," <em>NeurIPS MTI-LLM Workshop</em>, 2025.</li>
+      <li>Rakib et al., "DialogXpert," <em>arXiv:2505.17795</em>, 2025.</li>
+      <li>H. Zhu et al., "ESDP," <em>Scientific Reports</em>, vol. 14, p. 19759, 2024.</li>
+      <li>A. Y. Ng et al., "Policy invariance under reward transformations," <em>ICML</em>, 1999.</li>
+      <li>A. Liss, "Generative conversational dynamics," <em>arXiv:submit/7446261</em>, 2026.</li>
+    </ol>
+  </div>
+
+  <!-- APPENDIX -->
+  <section id="appendix">
+    <h2>Appendix</h2>
+
+    <div class="appendix-section">
+      <h4>A. Beta Distribution: Prior and Threshold</h4>
+      <p>Beta encodes the compositional reality of financial-services traffic: real visitor populations segment into intent tiers rather than arriving uniformly persuadable. GREEN ~ Beta(2,8), YELLOW ~ Beta(5,5), and RED ~ Beta(8,2) are chosen for their shapes as well as their means. Beta(2,8) concentrates probability mass near zero — a GREEN visitor is not merely "low-resistance on average" but tightly clustered at the low end with a short tail of borderline cases.</p>
+      <p>The $\rho_\text{final} &lt; 0.40$ resistance gate in Definition B sits meaningfully below $\mathbb{E}[\rho|\text{YELLOW}] = 0.50$ — a final resistance below 0.40 cannot be dismissed as the noise of a neutral visitor politely agreeing. It represents a genuine downward shift in disposition. The +32.0pp lift should be read as "additional percentage points of traffic that both selected Contact <em>and</em> crossed a principled resistance-decline gate."</p>
+    </div>
+
+    <div class="appendix-section">
+      <h4>B. PID Controller: Mechanism and Hyperparameters</h4>
+      <p>The PID controller is the same family of feedback mechanism that holds a car at cruise speed. At every turn it measures the gap between the visitor's current resistance $\rho_t$ and a target $\rho_\text{target}$, and applies three complementary corrective forces. The integral term is responsible for escaping the Stagnant Loop attractor: if resistance has plateaued far from target, the accumulating sum grows until it eventually dominates the output and forces a structural correction.</p>
+      <p><strong>Worked example.</strong> Consider a YELLOW visitor four turns into a stagnating conversation, with $\rho_\text{target} = 0.15$ and recent resistance history $[0.55, 0.52, 0.50, 0.49]$. At turn 4 with $K_p = 1.0$, $K_i = 0.2$, $K_d = 0.5$:</p>
+      <div class="eq">$$u_t = 1.0(-0.34) + 0.2(-1.46) + 0.5(0.01) \approx -0.627$$</div>
+      <p>The integral contribution ($-0.292$) is nearly as large as the proportional contribution ($-0.340$), correctly reflecting that resistance has been high for four turns — not merely that it is high right now. The resulting schema compression $\Delta = \text{clip}(0.627 \times 2.0,\; 1,\; 2) = 1.254$ translates this into a meaningfully tighter bound on the visitor's next self-reported resistance, forcing the trajectory to move.</p>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attention Fine-Tuning (AFT) · Alexander Liss</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #f7f6f2;
+      --ink: #1a1916;
+      --ink-mid: #4a4844;
+      --ink-light: #8a8880;
+      --ink-faint: #e8e6e0;
+      --link-blue: #1a4a8a;
+      --serif: 'DM Serif Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --mono: 'DM Mono', monospace;
+      --max: 780px;
+      --nav-w: 160px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--white);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    @media (min-width: 720px) {
+      body {
+        padding-left: 36px;
+      }
+    }
+
+    /* arXiv-style left margin (submission watermark) */
+    .arxiv-margin {
+      display: none;
+      position: fixed;
+      left: 10px;
+      top: 50%;
+      z-index: 5;
+      margin: 0;
+      padding: 0;
+      white-space: nowrap;
+      font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      color: #999999;
+      transform: translateY(-50%) rotate(-90deg);
+      transform-origin: center center;
+      pointer-events: none;
+    }
+
+    @media (min-width: 720px) {
+      .arxiv-margin {
+        display: block;
+      }
+    }
+
+    .site-wrapper {
+      max-width: calc(var(--max) + var(--nav-w) + 60px);
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: var(--nav-w) 1fr;
+      gap: 0 60px;
+    }
+
+    nav {
+      position: sticky;
+      top: 48px;
+      height: fit-content;
+      padding-top: 72px;
+    }
+
+    .nav-name {
+      font-family: var(--serif);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 28px;
+      line-height: 1.4;
+    }
+
+    .nav-name a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .nav-name a:hover { color: var(--ink); }
+
+    nav ul { list-style: none; }
+    nav ul li { margin-bottom: 4px; }
+    nav ul li a {
+      text-decoration: none;
+      color: var(--ink-mid);
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 0;
+      transition: color 0.15s;
+    }
+    nav ul li a:hover { color: var(--ink); }
+    nav ul li a .num {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #ccc;
+    }
+
+    .nav-divider {
+      width: 24px;
+      height: 1px;
+      background: var(--ink-faint);
+      margin: 20px 0;
+    }
+
+    main {
+      padding: 72px 0 120px;
+      max-width: var(--max);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 6px;
+    }
+
+    .section-deco {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .section-deco .sect-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-faint);
+    }
+
+    .section-deco .sect-line {
+      flex: 1;
+      height: 1px;
+      background: var(--ink-faint);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(32px, 4vw, 44px);
+      line-height: 1.1;
+      font-weight: 400;
+      margin-bottom: 12px;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+
+    .aft-meta {
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-bottom: 36px;
+    }
+
+    .aft-body p {
+      font-size: 15px;
+      color: var(--ink-mid);
+      line-height: 1.75;
+      margin-bottom: 18px;
+      max-width: 560px;
+    }
+
+    .aft-body p:last-child { margin-bottom: 0; }
+
+    .aft-body strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .aft-links {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid var(--ink-faint);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .aft-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      color: var(--link-blue);
+      border-bottom: 1px solid currentColor;
+      padding-bottom: 1px;
+      transition: opacity 0.15s;
+    }
+    .aft-link:hover { opacity: 0.6; }
+
+    @media (max-width: 680px) {
+      .site-wrapper {
+        grid-template-columns: 1fr;
+        padding: 0 20px;
+      }
+      nav {
+        position: static;
+        padding-top: 32px;
+        padding-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .nav-name { margin-bottom: 0; }
+      .nav-divider { display: none; }
+      nav ul { display: flex; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<p class="arxiv-margin" aria-hidden="true">arXiv:submit/7446261 [cs.AI] 15 Apr 2026</p>
+
+<div class="site-wrapper">
+
+  <nav>
+    <p class="nav-name"><a href="index.html">Alexander<br>Liss</a></p>
+    <div class="nav-divider"></div>
+    <ul>
+      <li><a href="index.html"><span class="num">←</span> Home</a></li>
+      <li><a href="index.html#papers"><span class="num">02</span> Papers</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <div class="section-deco">
+      <span class="sect-num">§ AFT</span>
+      <div class="sect-line"></div>
+    </div>
+    <p class="section-label">Research</p>
+    <h1>Attention Fine-Tuning (AFT)</h1>
+    <p class="aft-meta">Alexander Liss · Generative Conversational Dynamics (CS 6795, Georgia Tech)</p>
+
+    <div class="aft-body">
+      <p>
+        What if the reward signal is already inside the model? <strong>Attention Fine-Tuning (AFT)</strong> is a post-training framework that treats conversational flow as a trajectory through attentional state space. It combines a History-Aware Cross-Attention (HACA) reward—derived from the decoder’s own cross-attention—with KL-regularized weighted maximum likelihood, improving history integration in T5-Large on MultiWOZ 2.1 without human preference labels or a separately trained reward model.
+      </p>
+      <p>
+        On Phase F evaluation, the primary AFT checkpoint improves cross-attention focus by +9.2% relative to an SFT baseline on task-oriented dialogue. The public artifact includes training and evaluation code, committed metrics, and Hugging Face weights for reproduction.
+      </p>
+    </div>
+
+    <div class="aft-links">
+      <a class="aft-link" href="https://huggingface.co/aliss77777/gcd-aft-weights-phase-1" target="_blank" rel="noopener noreferrer">Model Weights</a>
+      <a class="aft-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank" rel="noopener noreferrer">Demo</a>
+      <a class="aft-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank" rel="noopener noreferrer">Code</a>
+    </div>
+  </main>
+
+</div>
+
+</body>
+</html>

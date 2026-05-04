@@ -132,11 +132,6 @@
       color: var(--ink);
       letter-spacing: -0.02em;
     }
-    h1 em {
-      font-style: italic;
-      color: var(--ink-mid);
-    }
-
     .hero-desc {
       font-size: 15px;
       line-height: 1.75;
@@ -240,8 +235,6 @@
       color: var(--ink);
       margin-bottom: 12px;
     }
-    h2 em { font-style: italic; color: var(--ink-mid); }
-
     .section-subtitle {
       font-size: 14px;
       color: var(--ink-light);
@@ -395,29 +388,6 @@
     }
     .contact-val:hover { text-decoration: underline; }
 
-    /* ─── FOOTER ─── */
-    footer {
-      grid-column: 1 / -1;
-      border-top: 1px solid var(--ink-faint);
-      padding: 32px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-sig {
-      font-family: var(--serif);
-      font-style: italic;
-      font-size: 14px;
-      color: var(--ink-light);
-    }
-
-    .footer-mono {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--ink-light);
-    }
-
     /* ─── RESPONSIVE ─── */
     @media (max-width: 680px) {
       .site-wrapper {
@@ -441,7 +411,6 @@
       .headshot-wrap { order: -1; }
       .headshot-wrap img { width: 120px; height: 120px; }
       .about-grid { grid-template-columns: 1fr; }
-      footer { flex-direction: column; gap: 12px; text-align: center; }
     }
   </style>
 </head>
@@ -473,7 +442,7 @@
     <section class="hero" id="about">
       <div class="hero-text">
         <p class="hero-tag">AI Builder • Scientist • Engineer</p>
-        <h1>Alexander <em>Liss</em></h1>
+        <h1>Alexander Liss</h1>
         <p class="hero-desc">
           AI systems are only as good as their governance layer. I research the reward signal problem: the missing infrastructure between what LLMs are optimized for and what intelligent systems actually need. I write about what that means for builders and algorithm designers on <strong>Substack</strong>.
         </p>
@@ -502,7 +471,7 @@
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Research</p>
-      <h2>Selected <em>papers.</em></h2>
+      <h2>Selected papers.</h2>
       <p class="section-subtitle">Published work and preprints. Links to PDFs and code where available.</p>
 
       <div class="papers">
@@ -515,9 +484,10 @@
             <p class="paper-desc">What if the reward signal is already inside the model? AFT uses a transformer's own cross-attention dynamics as a self-supervised training signal with no human labels and no separate reward model required.</p>
             <p class="paper-desc">Produces a +9.2% improvement in conversational focus on task-oriented dialogue benchmarks.</p>
             <div class="paper-links">
-              <a class="paper-link" href="#">PDF</a>
-              <a class="paper-link" href="#">arXiv</a>
-              <a class="paper-link" href="#">Code</a>
+              <a class="paper-link" href="aft.html">Paper</a>
+              <a class="paper-link" href="https://huggingface.co/aliss77777/gcd-aft-weights-phase-1" target="_blank" rel="noopener noreferrer">Model Weights</a>
+              <a class="paper-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank" rel="noopener noreferrer">Demo</a>
+              <a class="paper-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank" rel="noopener noreferrer">Code</a>
             </div>
           </div>
         </div>
@@ -526,13 +496,12 @@
           <span class="paper-num">02</span>
           <div class="paper-content">
             <p class="paper-title">Experience Orchestrator (EO)</p>
-            <p class="paper-meta">Alexander Liss</p>
+            <p class="paper-meta">Alexander Liss, Nicholas Desmond, Santiago Gil Gallego</p>
             <p class="paper-desc">When you can't reshape the model, govern the system above it. The EO applies classical control theory (PID controllers, belief tracking, contextual bandits) to steer multi-agent LLM trajectories toward a goal.</p>
             <p class="paper-desc">In a 60,000-simulation evaluation, the governance policy accounted for 97% of outcome variance. The agents barely mattered. The governor did.</p>
             <div class="paper-links">
-              <a class="paper-link" href="#">PDF</a>
-              <a class="paper-link" href="#">arXiv</a>
-              <a class="paper-link" href="#">Project Page</a>
+              <a class="paper-link" href="eo.html">Paper</a>
+              <a class="paper-link" href="https://exp-orchestrator-ui-aiewf-3xxvn3xina-uc.a.run.app/" target="_blank" rel="noopener noreferrer">Demo</a>
             </div>
           </div>
         </div>
@@ -547,7 +516,7 @@
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Writing</p>
-      <h2>Notes &amp; <em>essays.</em></h2>
+      <h2>Notes &amp; essays.</h2>
       <p class="section-subtitle">Longer-form thinking on my Substack. Ideas that don't fit a paper.</p>
 
       <div class="papers">
@@ -584,7 +553,7 @@
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Background</p>
-      <h2>A bit more <em>about me.</em></h2>
+      <h2>A bit more about me.</h2>
 
       <div class="about-grid">
         <div class="about-block">
@@ -621,36 +590,30 @@
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Get in touch</p>
-      <h2><em>Contact.</em></h2>
+      <h2>Contact.</h2>
       <p class="section-subtitle">Happy to chat about research, writing, or collaboration.</p>
 
       <div class="contact-row">
         <div class="contact-item">
           <span class="contact-label">Email</span>
-          <a class="contact-val" href="mailto:you@university.edu">you@university.edu</a>
+          <a class="contact-val" href="mailto:aliss77777@gmail.com">aliss77777@gmail.com</a>
+        </div>
+        <div class="contact-item">
+          <span class="contact-label">LinkedIn</span>
+          <a class="contact-val" href="https://www.linkedin.com/in/aliss77777/" target="_blank" rel="noopener noreferrer">linkedin.com/in/aliss77777</a>
         </div>
         <div class="contact-item">
           <span class="contact-label">Substack</span>
           <a class="contact-val" href="https://substack.com/@alexanderliss513090" target="_blank" rel="noopener noreferrer">@alexanderliss513090</a>
         </div>
         <div class="contact-item">
-          <span class="contact-label">Twitter / X</span>
-          <a class="contact-val" href="https://twitter.com" target="_blank">@yourhandle</a>
-        </div>
-        <div class="contact-item">
           <span class="contact-label">GitHub</span>
-          <a class="contact-val" href="https://github.com" target="_blank">github.com/yourname</a>
+          <a class="contact-val" href="https://github.com/aliss77777/" target="_blank" rel="noopener noreferrer">github.com/aliss77777</a>
         </div>
       </div>
     </section>
 
   </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <span class="footer-sig">Alexander Liss</span>
-    <span class="footer-mono">Updated May 2026</span>
-  </footer>
 
 </div>
 
