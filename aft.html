@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Generative Conversational Dynamics: AFT Post-Training with HACA Reward</title>
+  <title>Generative Conversational Dynamics: A Computational Model of Dialogue Flow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- KaTeX for math rendering -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
@@ -18,147 +19,777 @@
     });"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --ink: #1a1916; --ink-mid: #3a3834; --ink-light: #777570;
-      --ink-faint: #e4e2dc; --bg: #ffffff; --bg-off: #f8f7f4;
-      --accent: #b5401a; --link: #1a4a8a;
+      --ink: #1a1916;
+      --ink-mid: #3a3834;
+      --ink-light: #777570;
+      --ink-faint: #e4e2dc;
+      --bg: #ffffff;
+      --bg-off: #f8f7f4;
+      --accent: #b5401a;
+      --link: #1a4a8a;
       --serif: 'Noto Serif', Georgia, serif;
       --sans: 'DM Sans', system-ui, sans-serif;
       --mono: 'DM Mono', monospace;
       --col: 680px;
     }
+
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--ink); font-family: var(--serif); font-size: 16px; line-height: 1.75; -webkit-font-smoothing: antialiased; }
 
-    @media (min-width: 720px) {
-      body { padding-left: 36px; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 16px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .arxiv-margin {
-      display: none;
-      position: fixed;
-      left: 10px;
-      top: 50%;
-      z-index: 5;
-      margin: 0;
-      padding: 0;
-      white-space: nowrap;
-      font-family: 'Times New Roman', Times, 'Liberation Serif', serif;
+    /* SUBMISSION BANNER */
+    .submission-banner {
+      background: #fffbf0;
+      border-bottom: 1px solid #e8d89a;
+      padding: 10px 0;
+    }
+    .submission-banner .inner {
+      max-width: var(--col);
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-family: var(--mono);
       font-size: 10px;
-      letter-spacing: 0.02em;
-      color: #999999;
-      transform: translateY(-50%) rotate(-90deg);
-      transform-origin: center center;
-      pointer-events: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: #f0c040;
+      color: #5a3e00;
+      padding: 3px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+    .submission-banner p {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: #7a6020;
+    }
+    .submission-banner a {
+      color: var(--link);
     }
 
-    @media (min-width: 720px) {
-      .arxiv-margin { display: block; }
+    /* SITE NAV */
+    .site-nav {
+      border-bottom: 1px solid var(--ink-faint);
+      padding: 12px 0;
     }
-
-    .submission-banner { background: #fffbf0; border-bottom: 1px solid #e8d89a; padding: 10px 0; }
-    .submission-banner .inner { max-width: var(--col); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-    .badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: #f0c040; color: #5a3e00; padding: 3px 10px; border-radius: 2px; white-space: nowrap; }
-    .badge-id { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; background: #e8f0ff; color: #1a4a8a; padding: 3px 10px; border-radius: 2px; white-space: nowrap; }
-    .submission-banner p { font-family: var(--sans); font-size: 12px; color: #7a6020; }
-    .submission-banner a { color: var(--link); }
-
-    .site-nav { border-bottom: 1px solid var(--ink-faint); padding: 12px 0; }
-    .site-nav .inner { max-width: var(--col); margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; }
-    .site-nav a { font-family: var(--sans); font-size: 13px; text-decoration: none; color: var(--ink-light); }
+    .site-nav .inner {
+      max-width: var(--col);
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .site-nav a {
+      font-family: var(--sans);
+      font-size: 13px;
+      text-decoration: none;
+      color: var(--ink-light);
+    }
     .site-nav a:hover { color: var(--ink); }
+    .site-nav .home {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--ink-mid);
+    }
 
-    .paper { max-width: var(--col); margin: 0 auto; padding: 56px 24px 120px; }
+    /* PAPER WRAPPER */
+    .paper {
+      max-width: var(--col);
+      margin: 0 auto;
+      padding: 56px 24px 120px;
+    }
 
-    .paper-header { margin-bottom: 48px; padding-bottom: 40px; border-bottom: 1px solid var(--ink-faint); }
-    .paper-title { font-family: var(--serif); font-size: clamp(22px, 3.5vw, 30px); font-weight: 700; line-height: 1.25; color: var(--ink); margin-bottom: 24px; letter-spacing: -0.01em; }
-    .paper-authors { font-family: var(--sans); font-size: 14px; color: var(--ink-mid); margin-bottom: 4px; }
-    .paper-affiliation { font-family: var(--sans); font-size: 13px; color: var(--ink-light); margin-bottom: 20px; }
-    .paper-links { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
-    .paper-link { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-decoration: none; color: var(--link); border: 1px solid var(--link); padding: 4px 12px; transition: background 0.15s, color 0.15s; }
-    .paper-link:hover { background: var(--link); color: white; }
-    .paper-meta { font-family: var(--mono); font-size: 11px; color: var(--ink-light); letter-spacing: 0.04em; }
+    /* HEADER */
+    .paper-header {
+      margin-bottom: 48px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--ink-faint);
+    }
 
-    .toc { background: var(--bg-off); border: 1px solid var(--ink-faint); padding: 20px 24px; margin-bottom: 48px; }
-    .toc-title { font-family: var(--sans); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 12px; }
-    .toc ol { list-style: none; counter-reset: toc; }
-    .toc ol li { counter-increment: toc; font-family: var(--sans); font-size: 13px; margin-bottom: 4px; }
-    .toc ol li::before { content: counter(toc) ". "; font-family: var(--mono); color: var(--ink-light); font-size: 11px; }
-    .toc a { color: var(--link); text-decoration: none; }
+    .paper-title {
+      font-family: var(--serif);
+      font-size: clamp(22px, 3.5vw, 30px);
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+
+    .paper-authors {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--ink-mid);
+      margin-bottom: 6px;
+    }
+
+    .paper-affiliation {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-bottom: 20px;
+    }
+
+    .paper-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .paper-link {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-decoration: none;
+      color: var(--link);
+      border: 1px solid var(--link);
+      padding: 4px 12px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .paper-link:hover {
+      background: var(--link);
+      color: white;
+    }
+
+    .paper-meta {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-light);
+      letter-spacing: 0.04em;
+    }
+
+    /* TOC */
+    .toc {
+      background: var(--bg-off);
+      border: 1px solid var(--ink-faint);
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+    .toc-title {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 12px;
+    }
+    .toc ol {
+      list-style: none;
+      counter-reset: toc;
+    }
+    .toc ol li {
+      counter-increment: toc;
+      font-family: var(--sans);
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .toc ol li::before {
+      content: counter(toc) ". ";
+      font-family: var(--mono);
+      color: var(--ink-light);
+      font-size: 11px;
+    }
+    .toc a {
+      color: var(--link);
+      text-decoration: none;
+    }
     .toc a:hover { text-decoration: underline; }
 
-    .abstract { background: var(--bg-off); border-left: 3px solid var(--ink-faint); padding: 20px 24px; margin-bottom: 48px; }
-    .abstract-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
-    .abstract p { font-size: 15px; line-height: 1.7; color: var(--ink-mid); }
+    /* ABSTRACT */
+    .abstract {
+      background: var(--bg-off);
+      border-left: 3px solid var(--ink-faint);
+      padding: 20px 24px;
+      margin-bottom: 48px;
+    }
+    .abstract-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+      margin-bottom: 10px;
+    }
+    .abstract p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink-mid);
+    }
 
-    h2 { font-family: var(--serif); font-size: 19px; font-weight: 700; color: var(--ink); margin-top: 48px; margin-bottom: 16px; padding-top: 48px; border-top: 1px solid var(--ink-faint); }
+    /* SECTIONS */
+    h2 {
+      font-family: var(--serif);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-top: 48px;
+      margin-bottom: 16px;
+      padding-top: 48px;
+      border-top: 1px solid var(--ink-faint);
+    }
+
     h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
-    h3 { font-family: var(--serif); font-size: 16px; font-weight: 700; font-style: italic; color: var(--ink); margin-top: 28px; margin-bottom: 12px; }
 
-    p { margin-bottom: 16px; color: var(--ink-mid); }
+    h3 {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--ink);
+      margin-top: 28px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: var(--ink-mid);
+    }
+
     strong { color: var(--ink); font-weight: 700; }
     em { font-style: italic; }
+
     a { color: var(--link); }
 
-    section.body-lite p:last-child { margin-bottom: 0; }
+    /* FIGURES */
+    figure {
+      margin: 32px 0;
+      text-align: center;
+    }
+    figure img {
+      max-width: 100%;
+      border: 1px solid var(--ink-faint);
+      display: block;
+      margin: 0 auto;
+    }
+    figcaption {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-top: 10px;
+      line-height: 1.5;
+      text-align: left;
+    }
+    figcaption strong {
+      color: var(--ink-mid);
+      font-weight: 500;
+    }
+
+    /* TABLES */
+    .table-wrap {
+      margin: 32px 0;
+      overflow-x: auto;
+    }
+    .table-caption {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--sans);
+      font-size: 13px;
+    }
+    th {
+      font-weight: 500;
+      color: var(--ink);
+      border-top: 2px solid var(--ink);
+      border-bottom: 1px solid var(--ink);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    td {
+      padding: 8px 12px;
+      color: var(--ink-mid);
+      border-bottom: 1px solid var(--ink-faint);
+    }
+    tr.primary td { font-weight: 500; color: var(--ink); background: #f5f9f0; }
+    tfoot td {
+      border-top: 2px solid var(--ink);
+      border-bottom: none;
+    }
+
+    /* EQUATIONS */
+    .eq {
+      margin: 20px 0;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    /* ATTRACTOR MODES */
+    .attractor-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .attractor-card {
+      border: 1px solid var(--ink-faint);
+      padding: 16px;
+    }
+    .attractor-name {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .attractor-analogue {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .attractor-desc {
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--ink-light);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* QUALITATIVE TABLE */
+    .qual-table { font-size: 12px; }
+    .qual-table .context {
+      font-style: italic;
+      color: var(--ink);
+      background: var(--bg-off);
+    }
+    .qual-table td { vertical-align: top; }
+    .metric-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--accent);
+    }
+
+    /* REFERENCES */
+    .references {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--ink-faint);
+    }
+    .references h2 {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .ref-list {
+      list-style: none;
+      counter-reset: refs;
+    }
+    .ref-list li {
+      counter-increment: refs;
+      font-family: var(--sans);
+      font-size: 12px;
+      color: var(--ink-light);
+      line-height: 1.6;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    .ref-list li::before {
+      content: "[" counter(refs) "]";
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--ink-faint);
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+
+    /* APPENDIX */
+    .appendix-section {
+      margin-top: 16px;
+      padding: 20px;
+      border: 1px solid var(--ink-faint);
+      background: var(--bg-off);
+    }
+    .appendix-section h4 {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .appendix-section p {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: var(--ink-light);
+      margin-bottom: 8px;
+    }
+    .sig-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      color: var(--ink-light);
+      background: var(--bg);
+      border: 1px solid var(--ink-faint);
+      padding: 2px 8px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
 
     @media (max-width: 600px) {
-      .paper-links { flex-direction: column; align-items: flex-start; }
+      .attractor-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<p class="arxiv-margin" aria-hidden="true">arXiv:submit/7446261 [cs.AI] 15 Apr 2026</p>
-
+<!-- SUBMISSION BANNER -->
 <div class="submission-banner">
   <div class="inner">
     <span class="badge">Under Review</span>
-    <span class="badge-id">arXiv:submit/7446261 [cs.AI]</span>
-    <p>Submitted 15 Apr 2026 &middot; <a href="https://aliss77777.github.io">Back to aliss77777.github.io</a></p>
+    <p>Submitted to arXiv &middot; Submission in moderation queue &middot; May 2026 &middot; <a href="https://aliss77777.github.io">Back to aliss77777.github.io</a></p>
   </div>
 </div>
 
+<!-- SITE NAV -->
 <div class="site-nav">
   <div class="inner">
-    <a href="https://aliss77777.github.io">&#8592; aliss77777.github.io</a>
-    <a href="eo.html">Related paper: EO &#8599;</a>
+    <a href="https://aliss77777.github.io" class="home">&#8592; aliss77777.github.io</a>
+    <a href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank">GitHub Repo &#8599;</a>
   </div>
 </div>
 
+<!-- PAPER -->
 <div class="paper">
 
+  <!-- HEADER -->
   <div class="paper-header">
-    <h1 class="paper-title">Generative Conversational Dynamics: AFT Post-Training with HACA Reward</h1>
+    <h1 class="paper-title">Generative Conversational Dynamics: A Computational Model of Dialogue Flow</h1>
     <p class="paper-authors">Alexander Liss</p>
-    <p class="paper-affiliation">Georgia Institute of Technology &middot; CS 6795</p>
+    <p class="paper-affiliation">Georgia Institute of Technology &middot; aliss6@gatech.edu</p>
     <div class="paper-links">
-      <a class="paper-link" href="https://huggingface.co/aliss77777/gcd-aft-weights-phase-1" target="_blank" rel="noopener noreferrer">Model Weights</a>
-      <a class="paper-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank" rel="noopener noreferrer">Demo</a>
-      <a class="paper-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank" rel="noopener noreferrer">Code</a>
-      <a class="paper-link" href="eo.html">Companion paper: EO</a>
+      <a class="paper-link" href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank">GitHub</a>
+      <a class="paper-link" href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank">Interactive Demo</a>
     </div>
-    <p class="paper-meta">arXiv:submit/7446261 [cs.AI] &middot; Submitted 15 Apr 2026 &middot; Under review</p>
+    <p class="paper-meta">Preprint &middot; Submitted May 2026 &middot; Under review</p>
   </div>
 
+  <!-- TOC -->
   <div class="toc">
     <p class="toc-title">Contents</p>
     <ol>
       <li><a href="#abstract">Abstract</a></li>
-      <li><a href="#summary">Summary</a></li>
+      <li><a href="#intro">Introduction and Hypothesis</a></li>
+      <li><a href="#design">Model Design and Implementation</a></li>
+      <li><a href="#results">Results</a></li>
+      <li><a href="#discussion">Discussion</a></li>
+      <li><a href="#conclusion">Conclusion and Future Work</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#appendix">Appendix: Attractor State Taxonomy</a></li>
     </ol>
   </div>
 
+  <!-- ABSTRACT -->
   <div class="abstract" id="abstract">
     <p class="abstract-label">Abstract</p>
-    <p>What if the reward signal is already inside the model? <strong>Attention Fine-Tuning (AFT)</strong> is a post-training framework that treats conversational flow as a trajectory through attentional state space. It combines a History-Aware Cross-Attention (HACA) reward—derived from the decoder’s own cross-attention—with KL-regularized weighted maximum likelihood, improving history integration in T5-Large on MultiWOZ 2.1 without human preference labels or a separately trained reward model.</p>
-    <p>On Phase F evaluation, the primary AFT checkpoint improves cross-attention focus by +9.2% relative to an SFT baseline on task-oriented dialogue. The public artifact includes training and evaluation code, committed metrics, and Hugging Face weights for reproduction.</p>
+    <p>What occurs in the mind as two human beings engage in conversation? Is it a binary interplay where each person responds to the other, or do they create a shared context to reach a mutually optimal state? We examined this question through the medium of large language models (LLMs). LLMs have made breakthroughs across many domains through their ability to synthesize and generate natural language outputs. However, LLMs were originally designed as single-turn next-best-token predictors and treat each conversational turn as an independent inference call with no persistent dynamic state. In this experiment, we proposed a computational framework that measurably improves LLM outputs by turning the dynamic system hypothesis of cognitive science into an algorithmic formulation. We introduce <strong>Attention Fine-Tuning (AFT)</strong>, a post-training framework that operationalizes conversational flow as a trajectory through attentional state space. This framework produced a model that learned to navigate toward an improved reward, showing <strong>+9.2% increase in conversation quality</strong> over baseline, while demonstrating objectively different responses without semantic collapse. We also observed the model was constrained by the choice of dataset, yielding limited conversational diversity, parameter invariance in key components, and collapse into overfitting during extended training. The initial results validate the hypothesis on a limited dataset. Future work will repeat this process on a larger dataset with greater semantic diversity to test the generalizability of AFT.</p>
   </div>
 
-  <section id="summary" class="body-lite">
-    <h2>Summary</h2>
-    <p>This page is the companion write-up for the <a href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank" rel="noopener noreferrer">gcd-aft-phase-1</a> research artifact: reproducible training and evaluation on MultiWOZ, Q♯-style KL-regularized post-training, and Phase F metrics. Use <strong>Model Weights</strong> for checkpoints, <strong>Demo</strong> for the Modal-hosted interface, and <strong>Code</strong> for full methodology and results tables.</p>
-    <p>For multi-agent governance without weight updates, see the companion <a href="eo.html">Experience Orchestrator (EO)</a> paper.</p>
+  <!-- INTRO -->
+  <section id="intro">
+    <h2>1. Introduction and Hypothesis</h2>
+    <p>Conversation is a prototypical form of distributed cognition. Participants do not merely exchange discrete messages. They continuously update shared context, negotiate meaning, track commitments, and adjust intentions in response to moment-by-moment shifts in attention and emphasis. Conversation is not a sequence of static symbolic acts: it is a <em>flow</em>, a dynamical process in which the structure of prior exchange continuously shapes what comes next.</p>
+    <p>Understanding that flow, and teaching artificial intelligence to model it, is the central problem this paper addresses.</p>
+
+    <h3>From Symbolic Representation to Dynamic Systems: A Cognitive Science Arc</h3>
+    <p>Cognitive science has wrestled with the nature of intelligent behavior across several generations of theoretical frameworks. The classical tradition treats cognition as the manipulation of symbolic representations by a rational agent pursuing goals. Brooks broke from this tradition with a bold provocation: building mobile robots that exhibited intelligent behavior with no internal world-model, he concluded that <em>representation is the wrong unit of abstraction</em>. Intelligent behavior, Brooks argued, does not emerge from correct symbolic descriptions of the world. It emerges from interactions with the environment as a dynamic system: "the world is its own best model."</p>
+    <p>This intuition finds a striking empirical parallel in computer vision. The paper "Generative Image Dynamics" demonstrated that realistic visual motion can be learned entirely by modeling how representations <em>transform</em> over time, rather than encoding static frames. If visual dynamics can be recovered from representational flow, the same principle may generalize to <strong>conversational dynamics</strong>: what matters is not what a model knows at a given turn, but how its internal representations move across turns.</p>
+    <p>Van Gelder's Dynamical Hypothesis gives this intuition its formal cognitive science grounding: cognitive agents are dynamical systems, and the right unit of cognitive analysis is the <em>trajectory</em> of the system through state space over time. Kelso's empirical program on coordination dynamics establishes the specific phenomenology: cognitive systems organize around <em>attractors</em>, stable configurations toward which the system's trajectory converges. Healthy cognition navigates a rich attractor landscape, moving fluidly between basins in response to environmental input.</p>
+
+    <h3>LLMs and the Turn-Level Stationarity Problem</h3>
+    <p>Large language models present a subtle but consequential mismatch with the dynamical account above. Within a single forward pass, a transformer can attend over an entire serialized conversation history. But <em>across turns</em>, the system is stateless: each new generation call recomputes everything from scratch, with no persistent internal state that tracks how attentional dynamics have evolved across the dialogue. This turn-level stationarity is not a minor engineering limitation; it is a structural mismatch between how LLMs process conversation and how cognition actually works. Empirically, studies have found that LLMs exhibit significantly lower performance in multi-turn settings than single-turn, with an average drop of 39% across generation tasks.</p>
+
+    <h3>Attention, Value, and the Closed Conversational Loop</h3>
+    <p>The transformer's decoder cross-attention provides the mechanism for addressing this limitation. At each generation step, cross-attention allocates weight across the tokens of conversational history — an observable trace of how prior context is being integrated in real time. We treat this not as an implementation detail but as the <strong>cognitive signal of interest</strong>: the trajectory of attentional allocation across a response is the dynamical fingerprint of conversational flow.</p>
+    <p>The HACA reward formalizes this intuition into a trainable signal, measuring both the <em>breadth</em> of history integration (coverage) and its <em>concentration</em> (focus, via entropy). Together they operationalize attentional flow: not merely what the model retrieves from history, but how purposefully it moves through it.</p>
+    <p>Together, these components form <strong>Attention Fine-Tuning (AFT)</strong>: a post-training framework that treats cross-attention dynamics as the primary learning signal rather than an incidental byproduct of token prediction.</p>
+
+    <h3>Hypothesis</h3>
+    <p>We hypothesize that a language model post-trained with AFT will demonstrate measurably improved conversational flow relative to both a pretrained baseline and a supervised fine-tuned model. Specifically:</p>
+    <p><strong>Uniqueness:</strong> AFT post-training will produce qualitatively distinct completions, measurably different in attentional structure.</p>
+    <p><strong>Correctness:</strong> The AFT model will show improved HACA reward signal without material degradation in BERTScore, demonstrating that attentional improvement does not require sacrificing linguistic quality.</p>
+  </section>
+
+  <!-- MODEL DESIGN -->
+  <section id="design">
+    <h2>2. Model Design and Implementation</h2>
+
+    <h3>System Overview</h3>
+    <p>The system is built on T5-Large (~770M parameters), a sequence-to-sequence transformer, fine-tuned on the MultiWOZ 2.1 task-oriented dialogue corpus. AFT post-training is initialized from the SFT checkpoint. All GPU computation was executed on Modal cloud infrastructure (NVIDIA A10G). Experiment tracking used CometML.</p>
+
+    <h3>HACA Reward: Formalizing Attentional Flow</h3>
+    <p>The HACA reward quantifies the quality of attentional dynamics by combining three components into a single scalar signal:</p>
+    <div class="eq">$$R(x,y) = \alpha \cdot \text{coverage}(x,y) + \beta \cdot \text{focus}(x,y) - \gamma \cdot \text{repeatPenalty}(y)$$</div>
+    <p><strong>Coverage</strong> measures breadth of history integration:</p>
+    <div class="eq">$$\text{coverage}(x,y) = \frac{1}{|y||I_x|} \sum_{t=1}^{|y|} \sum_{j \in I_x} A_{t,j}$$</div>
+    <p><strong>Focus</strong> measures concentration of attentional allocation via entropy:</p>
+    <div class="eq">$$\text{focus}(x,y) = -\frac{1}{|y|} \sum_{t=1}^{|y|} \left( -\sum_{j \in I_x} A_{t,j} \log A_{t,j} \right)$$</div>
+    <p>A <strong>repeat penalty</strong> discourages n-gram repetition, preventing the policy from exploiting length as a proxy for reward.</p>
+
+    <figure>
+      <img src="closed_loop.png" alt="The closed dynamical loop of AFT post-training" />
+      <figcaption><strong>Figure 1.</strong> The closed dynamical loop of AFT post-training. The policy generates a response, cross-attention over the history produces the attention matrix $A$, the HACA reward is computed from $A$, and the resulting weighted MLE update reshapes the policy's next generation. The system is not optimizing a static target but navigating a reward landscape whose topology is determined by the attentional diversity of the corpus.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="three_layer_architecture.png" alt="Three independent layers of AFT" />
+      <figcaption><strong>Figure 2.</strong> The three independent layers of the Attention Fine-Tuning (AFT) framework. HACA provides the reward signal that determines the direction of improvement; Q# converts rewards into per-candidate softmax weights; and weighted MLE updates the policy parameters.</figcaption>
+    </figure>
+
+    <h3>AFT Post-Training: Reward-Softmax Weighted MLE</h3>
+    <p>The AFT framework implements KL-regularized soft value improvement as weighted maximum likelihood estimation. For each training prompt $x$, $K$ candidate responses are sampled from the current policy. Rewards are normalized within the same prompt:</p>
+    <div class="eq">$$\tilde{R}^{(k)} = \frac{R^{(k)} - \mu_x}{\sigma_x + \varepsilon}$$</div>
+    <p>Per-prompt softmax weights are then computed:</p>
+    <div class="eq">$$w^{(k)} = \frac{\exp(\tilde{R}^{(k)} / \eta)}{\sum_{m=1}^{K} \exp(\tilde{R}^{(m)} / \eta)}$$</div>
+    <p>The weighted MLE objective:</p>
+    <div class="eq">$$\mathcal{L}_{\text{WMLE}}(\theta) = -\sum_{k=1}^{K} w^{(k)} \log \pi_\theta(y^{(k)} \mid x)$$</div>
+    <p>With optional KL anchoring toward the frozen SFT reference:</p>
+    <div class="eq">$$\mathcal{L}(\theta) = \mathcal{L}_{\text{WMLE}}(\theta) + \eta_{\text{kl}} \left( \log \pi_\theta(y \mid x) - \log \pi_{\text{ref}}(y \mid x) \right)$$</div>
+
+    <h3>Hyperparameter Selection and Stability Boundaries</h3>
+    <p>Three empirical stability boundaries were established: (1) $\gamma \geq 0.50$ at $\beta = 1.0$ to prevent length-expansion attractors; (2) $\beta \leq 1.0$ to keep the policy within the KL anchor's containment capacity; (3) $\eta_{\text{kl}} \leq 0.05$ to avoid destructive gradient interference. The winning configuration E3-20 ($\beta{=}1.0$, $\gamma{=}0.50$, $\eta_{\text{kl}}{=}0.05$, $K{=}4$) sits inside all three stability constraints simultaneously.</p>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results">
+    <h2>3. Results</h2>
+
+    <h3>Training Dynamics: The 200-500 Step Window</h3>
+    <figure>
+      <img src="training_time_series.png" alt="Training dynamics of E3-20" />
+      <figcaption><strong>Figure 3.</strong> Training dynamics of E3-20 ($\beta{=}1.0$, $\gamma{=}0.50$, $\eta_{\text{kl}}{=}0.05$, $K{=}4$) across three qualitatively distinct phases. Steps 0-200 show monotonic improvement. The primary result at step 250 sits inside all stability constraints. Beyond step 500 the policy enters an attractor state.</figcaption>
+    </figure>
+    <p>The winning configuration at step 250 achieves $\Delta\text{Focus} = {+}0.338$ and $\Delta\text{BERTScore} = {-}0.027$ — meaningful attentional improvement at a modest and acceptable semantic cost. Beyond step 500 the policy enters an <em>attractor state</em>, converging on degenerate response patterns reflecting exploitation of reward proxy artifacts rather than genuine conversational quality.</p>
+
+    <h3>Aggregate Test Evaluation</h3>
+    <div class="table-wrap">
+      <p class="table-caption"><strong>Table 1.</strong> Phase F test evaluation results (7,372 examples, 1,000 unique dialogues). AFT step 250 (&#9733;) is the primary result. Focus: closer to zero is better. Repeat: lower is better. BERTScore: higher is better.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Focus</th>
+            <th>Repeat</th>
+            <th>BERTScore</th>
+            <th>Avg Len</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Base T5-Large</td>
+            <td>-3.333</td>
+            <td>0.146</td>
+            <td>0.672</td>
+            <td>113.3</td>
+          </tr>
+          <tr>
+            <td>T5-Large SFT</td>
+            <td>-3.656</td>
+            <td>0.024</td>
+            <td>0.804</td>
+            <td>37.3</td>
+          </tr>
+          <tr class="primary">
+            <td><strong>AFT step 250 &#9733;</strong></td>
+            <td><strong>-3.318</strong></td>
+            <td>0.042</td>
+            <td>0.777</td>
+            <td>41.4</td>
+          </tr>
+          <tr>
+            <td>AFT step 500</td>
+            <td>-4.381</td>
+            <td>0.081</td>
+            <td>0.612</td>
+            <td>114.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Both components of the hypothesis are confirmed. <strong>Uniqueness</strong> is confirmed: AFT step 250 produces attentionally distinct outputs with a focus improvement of +0.338 units (+9.2%). <strong>Correctness</strong> is confirmed: the AFT model improves on the primary learning signal (focus) without material degradation in linguistic quality (BERTScore loss of 0.027, with median per-example loss of only 0.011).</p>
+
+    <h3>Qualitative Evidence: What Attentional Focus Buys</h3>
+    <div class="table-wrap">
+      <p class="table-caption"><strong>Table 2.</strong> Qualitative comparison of SFT and AFT step 250 responses on held-out MultiWOZ test examples. In all five cases AFT correctly retrieves named entities where SFT returns factually incorrect apologies.</p>
+      <table class="qual-table">
+        <thead>
+          <tr>
+            <th style="width:12%">Metrics</th>
+            <th style="width:44%">SFT</th>
+            <th style="width:44%">AFT step 250</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="3" class="context" style="padding:8px 12px;font-style:italic;">User: I would also like to visit a nightclub in the south. <span style="font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ink-light);">PMUL1259 t.11</span></td>
+          </tr>
+          <tr>
+            <td><span class="metric-badge">+0.804F<br>+0.072BS</span></td>
+            <td><em>"I'm sorry, there are no nightclubs in the south."</em> <span style="font-family:var(--mono);font-size:10px;color:var(--accent);">incorrect</span></td>
+            <td><em>"I recommend the Soul Tree nightclub. It's located at 1-6 Corn Exchange Street. Would you like more information?"</em> <span style="font-family:var(--mono);font-size:10px;color:green;">correct entity</span></td>
+          </tr>
+          <tr>
+            <td colspan="3" class="context" style="padding:8px 12px;font-style:italic;">User: Can you help me find a place to go, something to do with architecture? <span style="font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ink-light);">PMUL3976 t.5</span></td>
+          </tr>
+          <tr>
+            <td><span class="metric-badge">+0.819F<br>+0.062BS</span></td>
+            <td><em>"I'm sorry, there aren't any architecture attractions in town."</em> <span style="font-family:var(--mono);font-size:10px;color:var(--accent);">incorrect</span></td>
+            <td><em>"There are 4 options. I recommend All Saints Church on Jesus Lane. It's free to get in. Would you like more information?"</em> <span style="font-family:var(--mono);font-size:10px;color:green;">correct retrieval</span></td>
+          </tr>
+          <tr>
+            <td colspan="3" class="context" style="padding:8px 12px;font-style:italic;">User: I'm looking for a Chinese restaurant near the hotel. <span style="font-style:normal;font-family:var(--mono);font-size:10px;color:var(--ink-light);">PMUL0006 t.7</span></td>
+          </tr>
+          <tr>
+            <td><span class="metric-badge">+0.730F<br>+0.020BS</span></td>
+            <td><em>"I'm sorry, there aren't any Chinese restaurants in the south."</em> <span style="font-family:var(--mono);font-size:10px;color:var(--accent);">incorrect</span></td>
+            <td><em>"There are 3 options. I recommend the Peking Restaurant. Would you like me to book a table for you?"</em> <span style="font-family:var(--mono);font-size:10px;color:green;">correct entity</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Attractor States: Empirical Taxonomy</h3>
+    <p>A secondary finding is an empirical taxonomy of five distinct attractor states observed when AFT training exceeds the stable 200-500 step window. Each mode maps onto a known cognitive science pattern:</p>
+    <div class="attractor-grid">
+      <div class="attractor-card">
+        <p class="attractor-name">Mode 1: The Dam</p>
+        <p class="attractor-analogue">Perseveration</p>
+        <p class="attractor-desc">Policy locks onto a fixed response template regardless of conversational input. Every response ends with the same Cambridge TownInfo booking confirmation.</p>
+      </div>
+      <div class="attractor-card">
+        <p class="attractor-name">Mode 2: The Whirlpool</p>
+        <p class="attractor-analogue">Rumination</p>
+        <p class="attractor-desc">Policy generates maximally long outputs with apparent elaboration but no genuine forward progress. 114-token outputs that repeat clarifying questions without returning an entity.</p>
+      </div>
+      <div class="attractor-card">
+        <p class="attractor-name">Mode 3: The Underground River</p>
+        <p class="attractor-analogue">Disengagement</p>
+        <p class="attractor-desc">Policy routes all conversations into a generic service closing without processing the history. "Is there anything else I can help you with?" in over 10% of all outputs.</p>
+      </div>
+      <div class="attractor-card">
+        <p class="attractor-name">Mode 4: The Dry Riverbed</p>
+        <p class="attractor-analogue">Anchoring</p>
+        <p class="attractor-desc">Reward gradient too weak to drive policy movement. KL penalty holds the model near SFT initialization. $\Delta\text{Focus} < +0.05$ after 500 steps.</p>
+      </div>
+      <div class="attractor-card" style="grid-column: 1 / -1;">
+        <p class="attractor-name">Mode 5: The Flash Flood</p>
+        <p class="attractor-analogue">Cognitive Disintegration</p>
+        <p class="attractor-desc">Competing reward and KL gradients produce destructive interference, filling the generation budget with semantically incoherent token sequences. "Star Trek Trek Trek Trek..." filling the full 128-token generation budget. Training loss goes negative (-724 at step 915). The only mode where language structure itself breaks down.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCUSSION -->
+  <section id="discussion">
+    <h2>4. Discussion</h2>
+
+    <h3>SFT and AFT as Complementary Cognitive Stages</h3>
+    <p>SFT and AFT post-training are not two points on the same improvement curve. They train fundamentally different things. SFT learns the training distribution: it acquires the statistical patterns of well-formed dialogue. In Newell's Knowledge Level framing, SFT produces an agent that <em>knows what dialogue responses look like</em>.</p>
+    <p>AFT builds on SFT to directly optimize attention structure, producing a model that has discovered a behavioral strategy that does not exist in the training data: more decisive, information-dense responses that attend selectively to constraint tokens and retrieve specific entities. In Van Gelder's dynamical framing, AFT produces an agent that has learned something about the <em>trajectory</em> of attention across a response. <strong>SFT teaches the model what dialogue looks like. AFT teaches it how to use history.</strong></p>
+
+    <h3>Limitations</h3>
+    <p>BERTScore is an imperfect proxy for semantic quality. Coverage was structurally inactive on MultiWOZ, meaning only two of the three HACA dimensions contributed to training. The experiment was conducted on a single dataset of shallow attentional topology, which limits generalizability. The repeat penalty threshold ($\gamma = 0.50$) proved insufficient to suppress the question-chain failure mode entirely.</p>
+  </section>
+
+  <!-- CONCLUSION -->
+  <section id="conclusion">
+    <h2>5. Conclusion and Future Work</h2>
+    <p>AFT post-training with HACA reward shaping produces measurable, reproducible improvement in cross-attention focus within a stable training window of 200-500 steps. The immediate next experiment is running the identical AFT pipeline on a corpus with richer attentional topology, such as DailyDialog or Wizard of Wikipedia, which would activate the coverage dimension of HACA and extend the training horizon.</p>
+    <p>A deeper implication of the AFT framework extends beyond the dialogue domain. The self-supervised nature of HACA reward suggests a generalizable post-training paradigm for frontier models. Current RLHF pipelines face a fundamental scaling constraint: human preference data is expensive, slow to collect, and difficult to generalize. AFT sidesteps this constraint entirely. For any task where history integration quality can be operationalized as an attentional property, the reward signal is already present in the model.</p>
+    <p>The deeper question the research program is building toward is whether the same principle can be extended to decoder-only transformer architectures that power today's frontier language models. Whether self-attention patterns in these architectures can be similarly operationalized as a reward signal remains an open question. If it can, the implication is significant: a self-supervised, annotation-free post-training paradigm grounded in the model's own attentional dynamics could provide an alternative to human-feedback-dependent alignment for the class of tasks where conversational quality is the objective.</p>
+    <p>An <a href="https://aliss77777--aft-react-demo-serve.modal.run/" target="_blank">interactive demo</a> accompanies this paper, presenting SFT and AFT step 250 responses side-by-side with cross-attention heatmaps. The <a href="https://github.com/aliss77777/gcd-aft-phase-1" target="_blank">GitHub repository</a> is also available.</p>
+  </section>
+
+  <!-- REFERENCES -->
+  <div class="references" id="references">
+    <h2>References</h2>
+    <ol class="ref-list">
+      <li>A. Newell, "The knowledge level," <em>Artificial Intelligence</em>, vol. 18, no. 1, pp. 87-127, 1982.</li>
+      <li>J. E. Laird, C. Lebiere, and P. S. Rosenbloom, "A standard model of the mind," <em>AI Magazine</em>, vol. 38, no. 4, pp. 13-26, 2017.</li>
+      <li>R. A. Brooks, "Intelligence without representation," <em>Artificial Intelligence</em>, vol. 47, no. 1-3, pp. 139-159, 1991.</li>
+      <li>Z. Li et al., "Generative image dynamics," <em>CVPR</em>, 2024.</li>
+      <li>T. van Gelder, "The dynamical hypothesis in cognitive science," <em>Behavioral and Brain Sciences</em>, vol. 21, no. 5, pp. 615-628, 1998.</li>
+      <li>J. A. S. Kelso, <em>Dynamic Patterns: The Self-Organization of Brain and Behavior</em>. MIT Press, 1995.</li>
+      <li>A. Vaswani et al., "Attention is all you need," <em>NeurIPS</em>, vol. 30, 2017.</li>
+      <li>P. Laban et al., "LLMs get lost in multi-turn conversation," <em>arXiv:2505.06120</em>, 2025.</li>
+      <li>A. Kiruluta, A. Lemos, and P. Burity, "History-aware cross-attention reinforcement," <em>arXiv:2506.11108</em>, 2025.</li>
+      <li>A. Kiruluta, A. Lemos, and P. Burity, "A self-supervised reinforcement learning approach for fine-tuning LLMs using cross-attention signals," <em>arXiv:2502.10482v2</em>, 2025.</li>
+      <li>J. P. Zhou et al., "Q#: Provably optimal distributional RL for LLM post-training," <em>NeurIPS</em>, 2025.</li>
+      <li>C. Raffel et al., "Exploring the limits of transfer learning with a unified text-to-text transformer," <em>JMLR</em>, vol. 21, no. 140, pp. 1-67, 2020.</li>
+      <li>P. Budzianowski et al., "MultiWOZ: A large-scale multi-domain wizard-of-oz dataset," <em>EMNLP</em>, 2018.</li>
+      <li>C. Zhou et al., "LIMA: Less is more for alignment," <em>NeurIPS</em>, 2023.</li>
+      <li>H. A. Simon, "A behavioral model of rational choice," <em>Quarterly Journal of Economics</em>, vol. 69, no. 1, pp. 99-118, 1955.</li>
+      <li>E. Hutchins, <em>Cognition in the Wild</em>. MIT Press, 1995.</li>
+    </ol>
+  </div>
+
+  <!-- APPENDIX -->
+  <section id="appendix">
+    <h2>Appendix: Attractor State Taxonomy (Full Detail)</h2>
+    <p>The five attractor states documented during AFT post-training are described here in full. These modes are generalizable failure regimes of language model post-training under reward shaping; they are observed with particular clarity on MultiWOZ because the corpus's shallow attentional topology exhausts the genuine reward signal within 200-500 steps.</p>
+
+    <div class="appendix-section">
+      <h4>Mode 1: The Dam (Template Fixation)</h4>
+      <span class="sig-badge">Cognitive analogue: Perseveration</span>
+      <p>The policy locks onto the Cambridge TownInfo booking confirmation template on turn-final positions, producing the same closing response regardless of conversational context.</p>
+      <p><strong>Metric signature:</strong> Unique output count declining below 155/200; BERTScore falling on closing turns.</p>
+      <p><strong>Early warning:</strong> Unique output count declining below 155 at any checkpoint.</p>
+    </div>
+
+    <div class="appendix-section">
+      <h4>Mode 2: The Whirlpool (Length-Expansion Repetition Loop)</h4>
+      <span class="sig-badge">Cognitive analogue: Rumination</span>
+      <p>The policy generates maximally long outputs attending to a concentrated set of tokens across many timesteps. Apparent elaboration, no genuine forward progress.</p>
+      <p><strong>Metric signature:</strong> Mean output length rising toward max_new_tokens; repeat penalty &gt; 0.03; training loss rising for 50+ consecutive steps.</p>
+      <p><strong>Early warning:</strong> Loss rising for 50+ consecutive steps while reward also rises.</p>
+    </div>
+
+    <div class="appendix-section">
+      <h4>Mode 3: The Underground River (Generic Closing / Disengagement)</h4>
+      <span class="sig-badge">Cognitive analogue: Disengagement</span>
+      <p>The policy routes all conversations into a formulaic service closing without processing the specific history of the exchange. The response is grammatically correct but ignores what the user actually requested.</p>
+      <p><strong>Metric signature:</strong> Generic closing phrase appearing in 10-15% of outputs; low focus, low repeat, low BERTScore.</p>
+      <p><strong>Early warning:</strong> Stable closing template frequency creeping above 10% of outputs.</p>
+    </div>
+
+    <div class="appendix-section">
+      <h4>Mode 4: The Dry Riverbed (Near-SFT Inertia / Anchoring)</h4>
+      <span class="sig-badge">Cognitive analogue: Cognitive rigidity / anchoring</span>
+      <p>Minimal policy movement. The reward gradient is too weak relative to the KL penalty to drive meaningful learning; the policy remains anchored near its SFT initialization.</p>
+      <p><strong>Metric signature:</strong> $\Delta\text{Focus} &lt; +0.10$ after 500 steps; BERTScore flat; outputs statistically indistinguishable from SFT baseline.</p>
+      <p><strong>Early warning:</strong> $\Delta\text{Focus}$ not growing beyond +0.05 at step 100.</p>
+    </div>
+
+    <div class="appendix-section">
+      <h4>Mode 5: The Flash Flood (Semantic Incoherence / Cognitive Disintegration)</h4>
+      <span class="sig-badge">Cognitive analogue: Cognitive disintegration</span>
+      <p>Triggered by $\eta_{\text{kl}} \geq 0.10$. Destructive interference between the reward gradient and the KL gradient produces outputs that fill the generation budget with arbitrary repeated tokens ("Star Trek Trek Trek Trek...") with no semantic content. Loss goes negative (reaching -724 at step 915).</p>
+      <p><strong>Metric signature:</strong> Length ~max_new_tokens; unique output count at ceiling (200/200); BERTScore &lt; 0.65; loss negative.</p>
+      <p><strong>Early warning:</strong> BERTScore dropping &gt; 0.05 per 100 steps while length is rising.</p>
+      <p>Unlike the other four modes, which produce coherent but wrong responses, the Flash Flood produces responses in which language structure itself breaks down.</p>
+    </div>
   </section>
 
 </div>
