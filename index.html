@@ -302,10 +302,35 @@
       margin-bottom: 14px;
     }
 
+    .paper-points {
+      list-style: none;
+      margin: 0 0 14px 0;
+      padding: 0;
+      max-width: 560px;
+    }
+
+    .paper-points li {
+      font-size: 14px;
+      color: var(--ink-mid);
+      line-height: 1.75;
+      margin-bottom: 8px;
+      padding-left: 14px;
+      position: relative;
+    }
+
+    .paper-points li::before {
+      content: '-';
+      position: absolute;
+      left: 0;
+      color: var(--ink-faint);
+      font-weight: 300;
+    }
+
     .paper-links {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      margin-top: 4px;
     }
 
     .paper-link {
@@ -510,8 +535,15 @@
           <div class="paper-content">
             <p class="paper-title">Attention Fine-Tuning (AFT)</p>
             <p class="paper-meta">Alexander Liss</p>
-            <p class="paper-desc">What if the reward signal is already inside the model? AFT uses a transformer's own cross-attention dynamics as a self-supervised training signal with no human labels and no separate reward model required. Implemented and evaluated on production dialogue benchmarks; model weights and demo available below.</p>
-            <p class="paper-desc">Produces a +9.2% improvement in conversational focus on task-oriented dialogue benchmarks.</p>
+            <p class="paper-desc">The next frontier in AI is models that improve themselves. Every major lab is racing toward systems that evaluate their own outputs, identify weaknesses, and update accordingly, like Google's AlphaEvolve. The problem is the reward signal from RLHF. Human preference labels are expensive, brittle, and external reward shaping too often results in model collapse.</p>
+            <p class="paper-desc">But what if the reward signal was in the model the whole time?</p>
+            <p class="paper-desc">This talk introduces Attention Fine-Tuning (AFT): a post-training framework that derives its reward signal entirely from within the model, with no human labels required. In internal testing as we developed this framework, we achieve significant results including:</p>
+            <ul class="paper-points">
+              <li>A 9.2% improvement in conversation quality over an SFT baseline on 7,372 test examples</li>
+              <li>95.5% of test examples improved on attentional focus, with 100% improvement on mid- and late-dialogue turns</li>
+              <li>A mapping of attractor states that draw conversational systems into semantic collapse</li>
+            </ul>
+            <p class="paper-desc">This framework is applicable to environments where optimizing the ability of an LLM to hold a conversation is critical, including customer service, education, personal assistants, and video games. It allows post-training without manually labelled preference data.</p>
             <div class="paper-links">
               <a class="paper-link" href="aft.html">Paper</a>
               <a class="paper-link" href="https://huggingface.co/aliss77777/gcd-aft-weights-phase-1" target="_blank" rel="noopener noreferrer">Model Weights</a>
@@ -526,8 +558,14 @@
           <div class="paper-content">
             <p class="paper-title">Experience Orchestrator (EO)</p>
             <p class="paper-meta">Alexander Liss, Nicholas Desmond, Santiago Gil Gallego</p>
-            <p class="paper-desc">When you can't reshape the model, build the governor above it. The EO applies classical control theory (PID controllers, belief tracking, contextual bandits) to steer multi-agent LLM trajectories toward a goal.</p>
-            <p class="paper-desc">In a 60,000-simulation evaluation, the governance policy accounted for 97% of outcome variance. The agents barely mattered. The governor did.</p>
+            <p class="paper-desc">In 2026, multi-agent ecosystems are everywhere. OpenClaw, MoltBook, and their successors let agents act autonomously in open-ended environments. And the world is discovering that prompting them toward good behavior doesn't scale. What's missing is a general framework for keeping LLM-based agents aligned with optimal behavior.</p>
+            <p class="paper-desc">This paper presents the Experience Orchestrator, a formal framework for applying control theory to govern large language models as independent agents. In internal testing as we developed this framework, we achieved significant results including:</p>
+            <ul class="paper-points">
+              <li>Measurable lift of +32 pts in goal completion rate over a naive LLM approach.</li>
+              <li>LLMs that move beyond 'annoyingly friendly' defaults toward nuanced, humanlike conversational intent.</li>
+              <li>Rich dialogue histories that provide training data for further iteration.</li>
+            </ul>
+            <p class="paper-desc">The framework generalizes to any environment where agents must make decisions under partial observability. It provides a way to govern LLM agents through a shared policy, similar to classical multi-agent reinforcement learning, but applicable to the world of OpenClaw.</p>
             <div class="paper-links">
               <a class="paper-link" href="eo.html">Paper</a>
               <a class="paper-link" href="https://exp-orchestrator-ui-aiewf-3xxvn3xina-uc.a.run.app/" target="_blank" rel="noopener noreferrer">Demo</a>
