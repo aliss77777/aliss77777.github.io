@@ -362,6 +362,10 @@
       color: var(--accent-warm);
     }
 
+    .paper.featured { background: var(--off-white); padding: 24px 20px; border-left: 3px solid var(--accent-warm); }
+    .video-title { color: inherit; text-decoration: none; }
+    .video-title:hover { color: var(--link-blue); text-decoration: underline; }
+
     /* ─── ABOUT ─── */
     .about-grid {
       display: grid;
@@ -451,7 +455,8 @@
       .nav-name { margin-bottom: 0; }
       .nav-brand { margin-bottom: 0; }
       .nav-divider { display: none; }
-      nav ul { display: flex; gap: 16px; }
+      nav { flex-wrap: wrap; }
+      nav ul { display: flex; flex-wrap: wrap; gap: 8px 16px; }
       .hero {
         grid-template-columns: 1fr;
       }
@@ -589,7 +594,8 @@
       <li><a href="#about"><span class="num">01</span> About</a></li>
       <li><a href="#writing"><span class="num">02</span> Writing</a></li>
       <li><a href="#research"><span class="num">03</span> Research</a></li>
-      <li><a href="#contact"><span class="num">04</span> Contact</a></li>
+      <li><a href="#videos"><span class="num">04</span> Videos</a></li>
+      <li><a href="#contact"><span class="num">06</span> Contact</a></li>
     </ul>
     <div class="nav-divider"></div>
     <ul>
@@ -639,8 +645,21 @@
 
       <div class="papers">
 
-        <div class="paper">
+        <div class="paper featured">
           <span class="paper-num">01</span>
+          <div class="paper-content">
+            <p class="section-label">Latest essay · September 28, 2026</p>
+            <p class="paper-title">Building the Harness That Teaches AI Agents on the Job.</p>
+            <p class="paper-desc">How agents learn from real outcomes: make assumptions explicit, test each change against unseen cases, and escalate the close calls. A practical experiment in improving an agent’s playbook without retraining the model.</p>
+            <div class="paper-links">
+              <a class="paper-link" href="https://alexanderliss513090.substack.com/p/building-the-harness-that-teaches" target="_blank" rel="noopener noreferrer">Read on Substack →</a>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="paper">
+          <span class="paper-num">02</span>
           <div class="paper-content">
             <p class="paper-title">You are who you meet. So are your agents.</p>
             <p class="paper-meta">Argues the next major AI opportunity is not a smarter model but the network where agents find each other, negotiate outcomes, and build reputations.</p>
@@ -651,7 +670,7 @@
         </div>
 
         <div class="paper">
-          <span class="paper-num">02</span>
+          <span class="paper-num">03</span>
           <div class="paper-content">
             <p class="paper-title">The Agentverse Is Here, but Agents Can't Deliver Your Pizza [Yet]</p>
             <p class="paper-meta">A skeptical read on the agentification of work, and why today's autonomous-agent hype echoes the overheated promises of the metaverse era.</p>
@@ -662,7 +681,7 @@
         </div>
 
         <div class="paper">
-          <span class="paper-num">03</span>
+          <span class="paper-num">04</span>
           <div class="paper-content">
             <p class="paper-title">Test, trace, repeat: experimentation is becoming the engine of self-improving AI</p>
             <p class="paper-meta">How disciplined experimentation, tracing, and evaluation, rather than one-off model breakthroughs, become the system that drives self-improving AI.</p>
@@ -673,7 +692,7 @@
         </div>
 
         <div class="paper">
-          <span class="paper-num">04</span>
+          <span class="paper-num">05</span>
           <div class="paper-content">
             <p class="paper-title">From clicks to cognition: digital experiences are becoming learning systems.</p>
             <p class="paper-meta">Your website is no longer just a destination. It is training data, and that changes how brands should build, measure, and optimize their digital products.</p>
@@ -684,7 +703,7 @@
         </div>
 
         <div class="paper">
-          <span class="paper-num">05</span>
+          <span class="paper-num">06</span>
           <div class="paper-content">
             <p class="paper-title">For Humans, love is the drug. But for AI, it's the reward signal.</p>
             <p class="paper-meta">Why the reward signal is the most important unsolved problem in AI, and what it has to do with how humans fall in love with ideas.</p>
@@ -740,7 +759,8 @@
           <span class="paper-num">02</span>
           <div class="paper-content">
             <p class="paper-title">Experience Orchestrator (EO)</p>
-            <p class="paper-meta">Alexander Liss, Nicholas Desmond, Santiago Gil Gallego</p>
+            <p class="paper-meta">Alexander Liss, Nicholas Desmond, Santiago Gil Gallego <span class="tag oral">Now on arXiv</span></p>
+            <p class="paper-desc">Dynamic Governance of Multi-LLM Agent Systems for Collaborative Conversational Outcomes · arXiv:2608.11207</p>
             <p class="paper-desc">In 2026, multi-agent ecosystems are everywhere. OpenClaw, MoltBook, and their successors let agents act autonomously in open-ended environments. And the world is discovering that prompting them toward good behavior doesn't scale. What's missing is a general framework for keeping LLM-based agents aligned with optimal behavior.</p>
             <p class="paper-desc">This paper presents the Experience Orchestrator, a formal framework for applying control theory to govern large language models as independent agents. In internal testing as we developed this framework, we achieved significant results including:</p>
             <ul class="paper-points">
@@ -750,7 +770,9 @@
             </ul>
             <p class="paper-desc">The framework generalizes to any environment where agents must make decisions under partial observability. It provides a way to govern LLM agents through a shared policy, similar to classical multi-agent reinforcement learning, but applicable to the world of OpenClaw.</p>
             <div class="paper-links">
-              <a class="paper-link" href="eo.html">Paper</a>
+              <a class="paper-link" href="https://arxiv.org/abs/2608.11207" target="_blank" rel="noopener noreferrer">arXiv</a>
+              <a class="paper-link" href="https://arxiv.org/pdf/2608.11207" target="_blank" rel="noopener noreferrer">PDF</a>
+              <a class="paper-link" href="eo.html">Read on site</a>
               <a class="paper-link" href="https://exp-orchestrator-ui-aiewf-3xxvn3xina-uc.a.run.app/" target="_blank" rel="noopener noreferrer">Demo</a>
             </div>
           </div>
@@ -759,10 +781,53 @@
       </div>
     </section>
 
+    <!-- VIDEOS -->
+    <section id="videos">
+      <div class="section-deco">
+        <span class="sect-num">§ 04</span>
+        <div class="sect-line"></div>
+      </div>
+      <p class="section-label">Watch &amp; listen</p>
+      <h2>Talks &amp; Conversations.</h2>
+      <p class="section-subtitle">On reward signals, AI strategy, and designing with simulation.</p>
+      <div class="papers">
+        <div class="paper">
+          <span class="paper-num">01</span>
+          <div class="paper-content">
+            <p class="paper-title"><a class="video-title" href="https://www.youtube.com/watch?v=PIXGeRLCRvU" target="_blank" rel="noopener noreferrer">The Reward Signal: The Missing Ingredient in Every AI System You’ve Built</a></p>
+            <p class="paper-meta">DataScienceWithSam</p>
+            <div class="paper-links">
+              <a class="paper-link" href="https://www.youtube.com/watch?v=PIXGeRLCRvU" target="_blank" rel="noopener noreferrer">Watch on YouTube →</a>
+            </div>
+          </div>
+        </div>
+        <div class="paper">
+          <span class="paper-num">02</span>
+          <div class="paper-content">
+            <p class="paper-title"><a class="video-title" href="https://www.youtube.com/watch?v=OYBBrIjll4w&amp;list=PL54fDexttT47PfDnV_LY6u_CyjbH8ZGTn&amp;index=1&amp;t=130s" target="_blank" rel="noopener noreferrer">Using Claude &amp; OpenAI as Your Go-To-Market Strategy Is Suicide - Websites, Bots, Goldmine ~ SOA 72</a></p>
+            <p class="paper-meta">Spark of Ages Podcast</p>
+            <div class="paper-links">
+              <a class="paper-link" href="https://www.youtube.com/watch?v=OYBBrIjll4w&amp;list=PL54fDexttT47PfDnV_LY6u_CyjbH8ZGTn&amp;index=1&amp;t=130s" target="_blank" rel="noopener noreferrer">Watch on YouTube · starts at 2:10 →</a>
+            </div>
+          </div>
+        </div>
+        <div class="paper">
+          <span class="paper-num">03</span>
+          <div class="paper-content">
+            <p class="paper-title"><a class="video-title" href="https://www.youtube.com/watch?v=8D_VdU6DBhI" target="_blank" rel="noopener noreferrer">Invisible Users, Invisible Interfaces: Accelerating Design Iteration with AI Simulation - Alex Liss</a></p>
+            <p class="paper-meta">AI Engineer</p>
+            <div class="paper-links">
+              <a class="paper-link" href="https://www.youtube.com/watch?v=8D_VdU6DBhI" target="_blank" rel="noopener noreferrer">Watch on YouTube →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ABOUT DETAIL -->
     <section>
       <div class="section-deco">
-        <span class="sect-num">§ 04</span>
+        <span class="sect-num">§ 05</span>
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Background</p>
@@ -802,7 +867,7 @@
     <!-- CONTACT -->
     <section id="contact">
       <div class="section-deco">
-        <span class="sect-num">§ 05</span>
+        <span class="sect-num">§ 06</span>
         <div class="sect-line"></div>
       </div>
       <p class="section-label">Get in touch</p>

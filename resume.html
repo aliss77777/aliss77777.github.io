@@ -43,6 +43,8 @@
       color: var(--link);
       text-decoration: none;
     }
+    .bar { flex-wrap: wrap; }
+    .bar-actions { display: flex; flex-wrap: wrap; gap: 16px; }
     .bar a:hover { text-decoration: underline; }
     .bar-title {
       font-size: 13px;
@@ -67,10 +69,13 @@
   <header class="bar">
     <a href="index.html">← Back to site</a>
     <span class="bar-title">Alexander Liss: CV / Résumé</span>
-    <a href="Alexander%20Liss%20Resume.pdf" download="Alexander-Liss-Resume.pdf">Download PDF</a>
+    <div class="bar-actions">
+      <a href="Alexander%20Liss%20Resume.pdf?v=bd1e9a10e7c7" target="_blank" rel="noopener noreferrer">Open PDF</a>
+      <a href="Alexander%20Liss%20Resume.pdf?v=bd1e9a10e7c7" download="Alexander-Liss-Resume.pdf">Download PDF</a>
+    </div>
   </header>
   <div class="viewer">
-    <iframe src="Alexander%20Liss%20Resume.pdf" title="Alexander Liss resume PDF"></iframe>
+    <iframe src="Alexander%20Liss%20Resume.pdf?v=bd1e9a10e7c7" title="Alexander Liss resume PDF"></iframe>
   </div>
 </body>
 </html>
